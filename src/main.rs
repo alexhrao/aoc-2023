@@ -6,6 +6,7 @@ pub mod day2;
 pub mod day3;
 pub mod day4;
 pub mod day5;
+pub mod day6;
 
 pub trait Day {
     fn task1(&self, file: &PathBuf);
@@ -29,6 +30,7 @@ fn main() {
         3 => Box::new(day3::Day3 {}),
         4 => Box::new(day4::Day4 {}),
         5 => Box::new(day5::Day5 {}),
+        6 => Box::new(day6::Day6 {}),
         d => panic!("Unrecognized day {}", d),
     };
     if let Some(t1) = args.task1_file {
