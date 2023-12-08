@@ -12,7 +12,10 @@ struct Card {
 
 impl Card {
     pub fn num_winning(&self) -> usize {
-        self.numbers.iter().filter(|&n| self.winners.contains(n)).count()
+        self.numbers
+            .iter()
+            .filter(|&n| self.winners.contains(n))
+            .count()
     }
     pub fn score(&self) -> usize {
         let winners = self.num_winning() as u32;
@@ -39,7 +42,7 @@ impl FromStr for Card {
         let winners = to_vec(nums.next().unwrap());
         let numbers = to_vec(nums.next().unwrap());
 
-        Ok(Card{ winners, numbers, })
+        Ok(Card { winners, numbers })
     }
 }
 
@@ -63,7 +66,7 @@ impl Day for Day4 {
         for (c, card) in cards.iter().enumerate() {
             let matches = card.num_winning();
             for _ in 0..copies[c] {
-                for c in c+1..=c+matches {
+                for c in c + 1..=c + matches {
                     copies[c] += 1;
                 }
             }

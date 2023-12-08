@@ -1,5 +1,5 @@
-use std::{str::FromStr, fs, fmt::Display};
 use rayon::prelude::*;
+use std::{fmt::Display, fs, str::FromStr};
 
 use super::Day;
 
@@ -41,19 +41,29 @@ impl FromStr for Map {
         let mut lines = s.lines();
         let mut name = lines.next().unwrap().split('-');
         let src = name.next().unwrap().to_string();
-        let dst = name.nth(1).unwrap().split_whitespace().next().unwrap().to_string();
+        let dst = name
+            .nth(1)
+            .unwrap()
+            .split_whitespace()
+            .next()
+            .unwrap()
+            .to_string();
         let ranges = lines
             .filter(|l| !l.is_empty())
             .map(|l| l.parse().unwrap())
             .collect();
-        Ok(Map { src, dst, ranges, })
+        Ok(Map { src, dst, ranges })
     }
 }
 
 impl Display for Map {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} -> {}: ", self.src, self.dst)?;
-        let ranges: Vec<_> = self.ranges.iter().map(|r| format!("{} -> {} ({})", r.src, r.dst, r.len)).collect();
+        let ranges: Vec<_> = self
+            .ranges
+            .iter()
+            .map(|r| format!("{} -> {} ({})", r.src, r.dst, r.len))
+            .collect();
         write!(f, "{}", ranges.join("; "))
     }
 }
@@ -77,14 +87,13 @@ fn traverse(seed: usize, maps: &[Map]) -> usize {
     seed
 }
 
-
-
 impl Day for Day5 {
     fn task1(&self, file: &std::path::PathBuf) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();
         let seed_line = lines.next().unwrap();
-        let seeds: Vec<usize> = seed_line.split_whitespace()
+        let seeds: Vec<usize> = seed_line
+            .split_whitespace()
             .skip(1)
             .map(|s| s.parse().unwrap())
             .collect();
@@ -103,10 +112,7 @@ impl Day for Day5 {
         // for map in maps {
         //     println!("{}", map);
         // }
-        let seeds: Vec<_> = seeds
-            .into_iter()
-            .map(|s| traverse(s, &maps))
-            .collect();
+        let seeds: Vec<_> = seeds.into_iter().map(|s| traverse(s, &maps)).collect();
         println!("{:?}", seeds.iter().min().unwrap());
     }
     fn task2(&self, file: &std::path::PathBuf) {
@@ -125,7 +131,8 @@ impl Day for Day5 {
             }
         }
         maps.push(buf.join("\n").parse().unwrap());
-        let seeds: Vec<usize> = seed_line.split_whitespace()
+        let seeds: Vec<usize> = seed_line
+            .split_whitespace()
             .skip(1)
             .map(|s| s.parse().unwrap())
             .collect();

@@ -41,19 +41,32 @@ impl Schematic {
                     stop = Some(c);
                 } else if let Some(end) = stop {
                     let num: String = row[start.unwrap()..=end].into_iter().collect();
-                    parts.push(Part { row: r, start: start.unwrap(), stop: end, num: num.parse().unwrap() });
+                    parts.push(Part {
+                        row: r,
+                        start: start.unwrap(),
+                        stop: end,
+                        num: num.parse().unwrap(),
+                    });
                     start = None;
                     stop = None;
                 } else {
-                    
                 }
                 if (ch < '0' || ch > '9') && ch != '.' {
-                    symbols.push(Symbol { row: r, col: c, c: ch })
+                    symbols.push(Symbol {
+                        row: r,
+                        col: c,
+                        c: ch,
+                    })
                 }
             }
             if let Some(end) = stop {
                 let num: String = row[start.unwrap()..=end].into_iter().collect();
-                parts.push(Part { row: r, start: start.unwrap(), stop: end, num: num.parse().unwrap() });
+                parts.push(Part {
+                    row: r,
+                    start: start.unwrap(),
+                    stop: end,
+                    num: num.parse().unwrap(),
+                });
             }
         }
         (parts, symbols)
@@ -62,18 +75,24 @@ impl Schematic {
 
 impl Day for Day3 {
     fn task1(&self, file: &std::path::PathBuf) {
-        let s = Schematic::from_rows(fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.chars().collect())
-            .collect());
+        let s = Schematic::from_rows(
+            fs::read_to_string(file)
+                .unwrap()
+                .lines()
+                .map(|l| l.chars().collect())
+                .collect(),
+        );
         let (parts, symbols) = s.extract();
-        let parts: Vec<Part> = parts.into_iter()
+        let parts: Vec<Part> = parts
+            .into_iter()
             .filter(|p| {
                 // If any symbol is close to us, keep it. We define "close" as:
                 // 1. Same row, but s.col = start - 1 or stop + 1
                 // 2. 1 row away, (start - 1) <= s.col <= (stop + 1)
-                for s in symbols.iter().skip_while(|s| p.row > 0 && s.row < (p.row - 1)) {
+                for s in symbols
+                    .iter()
+                    .skip_while(|s| p.row > 0 && s.row < (p.row - 1))
+                {
                     if s.row > (p.row + 1) {
                         break;
                     }
@@ -82,25 +101,32 @@ impl Day for Day3 {
                     }
                 }
                 false
-            }).collect();
+            })
+            .collect();
         let total: usize = parts.iter().map(|&p| p.num).sum();
         println!("{:?}", total);
     }
     fn task2(&self, file: &std::path::PathBuf) {
-        let s = Schematic::from_rows(fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.chars().collect())
-            .collect());
+        let s = Schematic::from_rows(
+            fs::read_to_string(file)
+                .unwrap()
+                .lines()
+                .map(|l| l.chars().collect())
+                .collect(),
+        );
         let (parts, symbols) = s.extract();
-        let total: usize = symbols.into_iter()
+        let total: usize = symbols
+            .into_iter()
             .filter_map(|s| {
                 if s.c != '*' {
                     return None;
                 }
                 // Look through the parts.
                 let mut these_parts = vec![];
-                for p in parts.iter().skip_while(|p| s.row > 0 && (p.row < (s.row - 1))) {
+                for p in parts
+                    .iter()
+                    .skip_while(|p| s.row > 0 && (p.row < (s.row - 1)))
+                {
                     // Same check
                     if p.row > (s.row + 1) {
                         break;
@@ -115,7 +141,8 @@ impl Day for Day3 {
                     None
                 }
                 // Some(these_parts)
-            }).sum();
+            })
+            .sum();
         println!("{}", total);
     }
 }
