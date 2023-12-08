@@ -40,7 +40,7 @@ impl From<char> for Card {
         }
     }
 }
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct Hand {
     cards: [Card; 5],
     bid: usize,
@@ -83,7 +83,7 @@ impl From<char> for WildCard {
         }
     }
 }
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct WildHand {
     cards: [WildCard; 5],
     bid: usize,
@@ -131,23 +131,29 @@ impl Hand {
     }
 }
 
-impl PartialOrd<Hand> for Hand {
-    fn partial_cmp(&self, other: &Hand) -> Option<std::cmp::Ordering> {
+impl Ord for Hand {
+    fn cmp(&self, other: &Hand) -> std::cmp::Ordering {
         if self.cards.eq(&other.cards) {
-            return Some(std::cmp::Ordering::Equal);
+            return std::cmp::Ordering::Equal;
         }
         let cmp = self.get_strength().cmp(&other.get_strength());
         if cmp != std::cmp::Ordering::Equal {
-            Some(cmp)
+            cmp
         } else {
             for (c1, c2) in self.cards.iter().zip(other.cards.iter()) {
                 let cmp = c1.cmp(c2);
                 if cmp != std::cmp::Ordering::Equal {
-                    return Some(cmp);
+                    return cmp;
                 }
             }
-            Some(std::cmp::Ordering::Equal)
+            std::cmp::Ordering::Equal
         }
+    }
+}
+
+impl PartialOrd for Hand {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
@@ -165,7 +171,7 @@ impl FromStr for Hand {
 }
 
 fn score(cards: &[WildCard]) -> HandStrength {
-    if cards.len() == 0 {
+    if cards.is_empty() {
         panic!("Must be given at least one card");
     }
     if cards.len() == 1 {
@@ -327,28 +333,34 @@ impl FromStr for WildHand {
     }
 }
 
-impl PartialOrd<WildHand> for WildHand {
-    fn partial_cmp(&self, other: &WildHand) -> Option<std::cmp::Ordering> {
+impl Ord for WildHand {
+    fn cmp(&self, other: &WildHand) -> std::cmp::Ordering {
         if self.cards.eq(&other.cards) {
-            return Some(std::cmp::Ordering::Equal);
+            return std::cmp::Ordering::Equal
         }
         let cmp = self.get_strength().cmp(&other.get_strength());
         if cmp != std::cmp::Ordering::Equal {
-            Some(cmp)
+            cmp
         } else {
             for (c1, c2) in self.cards.iter().zip(other.cards.iter()) {
                 let cmp = c1.cmp(c2);
                 if cmp != std::cmp::Ordering::Equal {
-                    return Some(cmp);
+                    return cmp;
                 }
             }
-            Some(std::cmp::Ordering::Equal)
+            std::cmp::Ordering::Equal
         }
     }
 }
 
+impl PartialOrd for WildHand {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 impl Day for Day7 {
-    fn task1(&self, file: &std::path::PathBuf) {
+    fn task1(&self, file: &std::path::Path) {
         let mut hands: Vec<Hand> = fs::read_to_string(file)
             .unwrap()
             .lines()
@@ -363,7 +375,7 @@ impl Day for Day7 {
             .sum::<usize>();
         println!("{}", total);
     }
-    fn task2(&self, file: &std::path::PathBuf) {
+    fn task2(&self, file: &std::path::Path) {
         let mut hands: Vec<WildHand> = fs::read_to_string(file)
             .unwrap()
             .lines()

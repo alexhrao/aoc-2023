@@ -134,7 +134,7 @@ struct Set {
 impl FromStr for Set {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let cubes = s.split(",").map(|c| c.trim().parse().unwrap()).collect();
+        let cubes = s.split(',').map(|c| c.trim().parse().unwrap()).collect();
         Ok(Self { cubes })
     }
 }
@@ -147,12 +147,12 @@ struct Game {
 impl FromStr for Game {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut split = s.strip_prefix("Game ").unwrap().split(":");
+        let mut split = s.strip_prefix("Game ").unwrap().split(':');
         let id = split.next().unwrap().parse().unwrap();
         let sets = split
             .next()
             .unwrap()
-            .split(";")
+            .split(';')
             .map(|s| s.trim().parse().unwrap())
             .collect();
         Ok(Self { id, sets })
@@ -160,7 +160,7 @@ impl FromStr for Game {
 }
 
 impl Day for Day2 {
-    fn task1(&self, file: &std::path::PathBuf) {
+    fn task1(&self, file: &std::path::Path) {
         let games: Vec<Game> = fs::read_to_string(file)
             .unwrap()
             .lines()
@@ -188,7 +188,7 @@ impl Day for Day2 {
         }
         println!("{}", all);
     }
-    fn task2(&self, file: &std::path::PathBuf) {
+    fn task2(&self, file: &std::path::Path) {
         let games: Vec<Game> = fs::read_to_string(file)
             .unwrap()
             .lines()

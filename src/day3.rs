@@ -34,13 +34,13 @@ impl Schematic {
             let mut start = None;
             let mut stop = None;
             for (c, &ch) in row.iter().enumerate() {
-                if ch >= '0' && ch <= '9' {
+                if ch.is_ascii_digit() {
                     if start.is_none() {
                         start = Some(c);
                     }
                     stop = Some(c);
                 } else if let Some(end) = stop {
-                    let num: String = row[start.unwrap()..=end].into_iter().collect();
+                    let num: String = row[start.unwrap()..=end].iter().collect();
                     parts.push(Part {
                         row: r,
                         start: start.unwrap(),
@@ -49,9 +49,8 @@ impl Schematic {
                     });
                     start = None;
                     stop = None;
-                } else {
                 }
-                if (ch < '0' || ch > '9') && ch != '.' {
+                if ch.is_ascii_digit() && ch != '.' {
                     symbols.push(Symbol {
                         row: r,
                         col: c,
@@ -60,7 +59,7 @@ impl Schematic {
                 }
             }
             if let Some(end) = stop {
-                let num: String = row[start.unwrap()..=end].into_iter().collect();
+                let num: String = row[start.unwrap()..=end].iter().collect();
                 parts.push(Part {
                     row: r,
                     start: start.unwrap(),
@@ -74,7 +73,7 @@ impl Schematic {
 }
 
 impl Day for Day3 {
-    fn task1(&self, file: &std::path::PathBuf) {
+    fn task1(&self, file: &std::path::Path) {
         let s = Schematic::from_rows(
             fs::read_to_string(file)
                 .unwrap()
@@ -106,7 +105,7 @@ impl Day for Day3 {
         let total: usize = parts.iter().map(|&p| p.num).sum();
         println!("{:?}", total);
     }
-    fn task2(&self, file: &std::path::PathBuf) {
+    fn task2(&self, file: &std::path::Path) {
         let s = Schematic::from_rows(
             fs::read_to_string(file)
                 .unwrap()

@@ -88,7 +88,7 @@ fn traverse(seed: usize, maps: &[Map]) -> usize {
 }
 
 impl Day for Day5 {
-    fn task1(&self, file: &std::path::PathBuf) {
+    fn task1(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();
         let seed_line = lines.next().unwrap();
@@ -115,7 +115,7 @@ impl Day for Day5 {
         let seeds: Vec<_> = seeds.into_iter().map(|s| traverse(s, &maps)).collect();
         println!("{:?}", seeds.iter().min().unwrap());
     }
-    fn task2(&self, file: &std::path::PathBuf) {
+    fn task2(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();
         let seed_line = lines.next().unwrap();

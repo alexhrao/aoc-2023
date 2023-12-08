@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub mod day1;
 pub mod day2;
@@ -10,8 +10,8 @@ pub mod day6;
 pub mod day7;
 
 pub trait Day {
-    fn task1(&self, file: &PathBuf);
-    fn task2(&self, file: &PathBuf);
+    fn task1(&self, file: &Path);
+    fn task2(&self, file: &Path);
 }
 
 #[derive(Parser, Debug)]

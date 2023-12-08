@@ -11,7 +11,7 @@ fn num_ways_to_win(race: (usize, usize)) -> usize {
 }
 
 impl Day for Day6 {
-    fn task1(&self, file: &std::path::PathBuf) {
+    fn task1(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();
         let times = lines
@@ -36,7 +36,7 @@ impl Day for Day6 {
         let total: usize = races.into_iter().map(num_ways_to_win).product();
         println!("{}", total);
     }
-    fn task2(&self, file: &std::path::PathBuf) {
+    fn task2(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();
         let times = lines

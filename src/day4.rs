@@ -22,7 +22,7 @@ impl Card {
         if winners == 0 {
             0
         } else {
-            (2 as usize).pow(winners - 1)
+            2_usize.pow(winners - 1)
         }
     }
 }
@@ -47,7 +47,7 @@ impl FromStr for Card {
 }
 
 impl Day for Day4 {
-    fn task1(&self, file: &std::path::PathBuf) {
+    fn task1(&self, file: &std::path::Path) {
         let cards: Vec<Card> = fs::read_to_string(file)
             .unwrap()
             .lines()
@@ -56,7 +56,7 @@ impl Day for Day4 {
         let total: usize = cards.iter().map(Card::score).sum();
         println!("{}", total);
     }
-    fn task2(&self, file: &std::path::PathBuf) {
+    fn task2(&self, file: &std::path::Path) {
         let cards: Vec<Card> = fs::read_to_string(file)
             .unwrap()
             .lines()
@@ -66,8 +66,8 @@ impl Day for Day4 {
         for (c, card) in cards.iter().enumerate() {
             let matches = card.num_winning();
             for _ in 0..copies[c] {
-                for c in c + 1..=c + matches {
-                    copies[c] += 1;
+                for c in copies.iter_mut().take(c + matches + 1).skip(c + 1) {
+                    *c += 1;
                 }
             }
         }
