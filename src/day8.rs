@@ -1,15 +1,15 @@
-use std::{fs, collections::HashMap};
+use std::{collections::HashMap, fs};
 
 use super::Day;
-use regex::Regex;
 use gcd::{self, Gcd};
+use regex::Regex;
 
 pub struct Day8;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Direction {
     Left,
-    Right
+    Right,
 }
 
 impl From<char> for Direction {
@@ -33,7 +33,7 @@ fn traverse_single(dirs: &[Direction], map: &HashMap<&str, (&str, &str)>) -> usi
         };
         counter += 1;
         if seed == "ZZZ" {
-            break
+            break;
         }
     }
     counter
@@ -51,14 +51,15 @@ fn traverse(start: &str, dirs: &[Direction], map: &HashMap<&str, (&str, &str)>) 
         };
         counter += 1;
         if seed.ends_with('Z') {
-            break
+            break;
         }
     }
     counter
 }
 
 fn traverse_ghost(dirs: &[Direction], map: &HashMap<&str, (&str, &str)>) -> usize {
-    let mut times = map.keys()
+    let mut times = map
+        .keys()
         .filter(|k| k.ends_with('A'))
         .map(|k| traverse(k, dirs, map));
 
@@ -69,22 +70,22 @@ fn traverse_ghost(dirs: &[Direction], map: &HashMap<&str, (&str, &str)>) -> usiz
     ans
 }
 
-
 impl Day for Day8 {
     fn task1(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
 
         let mut lines = backing.lines();
-        let dirs: Vec<Direction> = lines.next().unwrap()
-            .chars()
-            .map(char::into)
-            .collect();
+        let dirs: Vec<Direction> = lines.next().unwrap().chars().map(char::into).collect();
         // println!("{:?}", dirs);
         let reg = Regex::new(r"(\w\w\w) = \((\w\w\w), (\w\w\w)\)").unwrap();
-        let nodes: HashMap<_, _> = lines.skip(1)
+        let nodes: HashMap<_, _> = lines
+            .skip(1)
             .map(|l| {
                 let m = reg.captures(l).unwrap();
-                (m.get(1).unwrap().as_str(), (m.get(2).unwrap().as_str(), m.get(3).unwrap().as_str()))
+                (
+                    m.get(1).unwrap().as_str(),
+                    (m.get(2).unwrap().as_str(), m.get(3).unwrap().as_str()),
+                )
             })
             .collect();
         // println!("{:?}", nodes);
@@ -94,15 +95,16 @@ impl Day for Day8 {
         let backing = fs::read_to_string(file).unwrap();
 
         let mut lines = backing.lines();
-        let dirs: Vec<Direction> = lines.next().unwrap()
-            .chars()
-            .map(char::into)
-            .collect();
+        let dirs: Vec<Direction> = lines.next().unwrap().chars().map(char::into).collect();
         let reg = Regex::new(r"(\w\w\w) = \((\w\w\w), (\w\w\w)\)").unwrap();
-        let nodes: HashMap<_, _> = lines.skip(1)
+        let nodes: HashMap<_, _> = lines
+            .skip(1)
             .map(|l| {
                 let m = reg.captures(l).unwrap();
-                (m.get(1).unwrap().as_str(), (m.get(2).unwrap().as_str(), m.get(3).unwrap().as_str()))
+                (
+                    m.get(1).unwrap().as_str(),
+                    (m.get(2).unwrap().as_str(), m.get(3).unwrap().as_str()),
+                )
             })
             .collect();
         println!("{}", traverse_ghost(&dirs, &nodes));

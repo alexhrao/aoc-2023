@@ -8,13 +8,11 @@ fn diff(hist: &[isize]) -> Vec<Vec<isize>> {
     let mut out = vec![hist.to_vec()];
     let mut seed = hist;
     loop {
-        let diff: Vec<_> = seed.windows(2)
-            .map(|w| w[1] - w[0])
-            .collect();
+        let diff: Vec<_> = seed.windows(2).map(|w| w[1] - w[0]).collect();
         let done = diff.iter().all(|&d| d == 0);
         out.push(diff);
         if done {
-            break out
+            break out;
         } else {
             seed = &out.last().unwrap();
         }
@@ -27,7 +25,7 @@ fn build_out(diffs: Vec<Vec<isize>>) -> Vec<Vec<isize>> {
     diffs[0].push(0);
     let len = diffs.len();
     for d in 1..len {
-        let tmp = diffs[d].last().unwrap() +  diffs[d-1].last().unwrap();
+        let tmp = diffs[d].last().unwrap() + diffs[d - 1].last().unwrap();
         diffs[d].push(tmp);
     }
     diffs
@@ -39,7 +37,7 @@ fn build_in(diffs: Vec<Vec<isize>>) -> Vec<Vec<isize>> {
     diffs[0].insert(0, 0);
     let len = diffs.len();
     for d in 1..len {
-        let tmp = diffs[d].first().unwrap() - diffs[d-1].first().unwrap();
+        let tmp = diffs[d].first().unwrap() - diffs[d - 1].first().unwrap();
         diffs[d].insert(0, tmp);
     }
     diffs
@@ -47,11 +45,13 @@ fn build_in(diffs: Vec<Vec<isize>>) -> Vec<Vec<isize>> {
 
 impl Day for Day9 {
     fn task1(&self, file: &std::path::Path) {
-        let hists: Vec<Vec<isize>> = fs::read_to_string(file).unwrap()
+        let hists: Vec<Vec<isize>> = fs::read_to_string(file)
+            .unwrap()
             .lines()
             .map(|l| l.split_whitespace().map(|s| s.parse().unwrap()).collect())
             .collect();
-        let total = hists.iter()
+        let total = hists
+            .iter()
             .map(|h| diff(h))
             .map(build_out)
             .map(|d| *d.last().unwrap().last().unwrap())
@@ -59,11 +59,13 @@ impl Day for Day9 {
         println!("{:?}", total);
     }
     fn task2(&self, file: &std::path::Path) {
-        let hists: Vec<Vec<isize>> = fs::read_to_string(file).unwrap()
+        let hists: Vec<Vec<isize>> = fs::read_to_string(file)
+            .unwrap()
             .lines()
             .map(|l| l.split_whitespace().map(|s| s.parse().unwrap()).collect())
             .collect();
-        let total = hists.iter()
+        let total = hists
+            .iter()
             .map(|h| diff(h))
             .map(build_in)
             .map(|d| *d.last().unwrap().first().unwrap())

@@ -336,7 +336,7 @@ impl FromStr for WildHand {
 impl Ord for WildHand {
     fn cmp(&self, other: &WildHand) -> std::cmp::Ordering {
         if self.cards.eq(&other.cards) {
-            return std::cmp::Ordering::Equal
+            return std::cmp::Ordering::Equal;
         }
         let cmp = self.get_strength().cmp(&other.get_strength());
         if cmp != std::cmp::Ordering::Equal {
