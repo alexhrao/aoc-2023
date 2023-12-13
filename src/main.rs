@@ -3,6 +3,9 @@ use std::path::{Path, PathBuf};
 
 pub mod day1;
 pub mod day10;
+pub mod day11;
+pub mod day12;
+pub mod day13;
 pub mod day2;
 pub mod day3;
 pub mod day4;
@@ -11,8 +14,6 @@ pub mod day6;
 pub mod day7;
 pub mod day8;
 pub mod day9;
-pub mod day11;
-pub mod day12;
 
 pub trait Day {
     fn task1(&self, file: &Path);
@@ -43,6 +44,7 @@ fn main() {
         10 => Box::new(day10::Day10 {}),
         11 => Box::new(day11::Day11 {}),
         12 => Box::new(day12::Day12 {}),
+        13 => Box::new(day13::Day13 {}),
         d => panic!("Unrecognized day {}", d),
     };
     if let Some(t1) = args.task1_file {
