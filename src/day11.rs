@@ -36,27 +36,38 @@ fn dist(p1: &(usize, usize), p2: &(usize, usize)) -> usize {
     (p1.0.max(p2.0) - p1.0.min(p2.0)) + (p1.1.max(p2.1) - p1.1.min(p2.1))
 }
 
-
 impl Day for Day11 {
     fn task1(&self, file: &std::path::Path) {
-        let galaxies: Vec<_> = fs::read_to_string(file).unwrap().lines()
+        let galaxies: Vec<_> = fs::read_to_string(file)
+            .unwrap()
+            .lines()
             .enumerate()
-            .flat_map(|(r, l)| l.chars().enumerate().filter_map(move |(c, ch)| if ch == '#' { Some((r, c)) } else { None }))
+            .flat_map(|(r, l)| {
+                l.chars()
+                    .enumerate()
+                    .filter_map(move |(c, ch)| if ch == '#' { Some((r, c)) } else { None })
+            })
             .collect();
 
         let shifted = expand(&galaxies, 2);
         let mut dists = vec![];
         for g1 in 0..shifted.len() {
-            for g2 in (g1+1)..shifted.len() {
+            for g2 in (g1 + 1)..shifted.len() {
                 dists.push(dist(&shifted[g1], &shifted[g2]));
             }
         }
         println!("{}", dists.iter().sum::<usize>());
     }
     fn task2(&self, file: &std::path::Path) {
-        let galaxies: Vec<_> = fs::read_to_string(file).unwrap().lines()
+        let galaxies: Vec<_> = fs::read_to_string(file)
+            .unwrap()
+            .lines()
             .enumerate()
-            .flat_map(|(r, l)| l.chars().enumerate().filter_map(move |(c, ch)| if ch == '#' { Some((r, c)) } else { None }))
+            .flat_map(|(r, l)| {
+                l.chars()
+                    .enumerate()
+                    .filter_map(move |(c, ch)| if ch == '#' { Some((r, c)) } else { None })
+            })
             .collect();
         println!("{}", galaxies.len());
 
@@ -64,7 +75,7 @@ impl Day for Day11 {
         println!("{}", shifted.len());
         let mut dists = vec![];
         for g1 in 0..shifted.len() {
-            for g2 in (g1+1)..shifted.len() {
+            for g2 in (g1 + 1)..shifted.len() {
                 dists.push(dist(&shifted[g1], &shifted[g2]));
             }
         }
