@@ -63,7 +63,7 @@ fn solve_puzzle_again(puzzle: &str, prev: &Reflection) -> Option<Reflection> {
     // println!("{:?}", cols);
     let out = find_all_reflections(&rows)
         .map(|r| Reflection::Horizontal(r.0, r.1))
-        .chain({ find_all_reflections(&cols).map(|c| Reflection::Vertical(c.0, c.1)) })
+        .chain(find_all_reflections(&cols).map(|c| Reflection::Vertical(c.0, c.1)))
         .find(|r| r != prev);
     out
 }
