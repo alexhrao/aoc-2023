@@ -8,6 +8,7 @@ pub mod day12;
 pub mod day13;
 pub mod day14;
 pub mod day15;
+pub mod day16;
 pub mod day2;
 pub mod day3;
 pub mod day4;
@@ -49,6 +50,7 @@ fn main() {
         13 => Box::new(day13::Day13 {}),
         14 => Box::new(day14::Day14 {}),
         15 => Box::new(day15::Day15 {}),
+        16 => Box::new(day16::Day16 {}),
         d => panic!("Unrecognized day {}", d),
     };
     if let Some(t1) = args.task1_file {
