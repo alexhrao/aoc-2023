@@ -2,7 +2,7 @@ use std::fs;
 
 use super::Day;
 
-pub struct Day9;
+pub struct Day09;
 
 fn diff(hist: &[isize]) -> Vec<Vec<isize>> {
     let mut out = vec![hist.to_vec()];
@@ -43,7 +43,7 @@ fn build_in(diffs: Vec<Vec<isize>>) -> Vec<Vec<isize>> {
     diffs
 }
 
-impl Day for Day9 {
+impl Day for Day09 {
     fn task1(&self, file: &std::path::Path) {
         let hists: Vec<Vec<isize>> = fs::read_to_string(file)
             .unwrap()

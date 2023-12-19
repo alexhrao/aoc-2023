@@ -3,7 +3,7 @@ use std::{fmt::Display, fs, str::FromStr};
 
 use super::Day;
 
-pub struct Day5;
+pub struct Day05;
 
 #[derive(Debug, Clone, Copy)]
 struct Range {
@@ -87,7 +87,7 @@ fn traverse(seed: usize, maps: &[Map]) -> usize {
     seed
 }
 
-impl Day for Day5 {
+impl Day for Day05 {
     fn task1(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();

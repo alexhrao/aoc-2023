@@ -1,7 +1,7 @@
 use super::Day;
 use std::fs;
 
-pub struct Day1 {}
+pub struct Day01;
 
 const NUMS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3", "4",
@@ -53,7 +53,7 @@ fn get_digits_hard(line: &str) -> u32 {
     (first * 10) + second
 }
 
-impl Day for Day1 {
+impl Day for Day01 {
     fn task1(&self, file: &std::path::Path) {
         let sum: u32 = fs::read_to_string(file)
             .unwrap()

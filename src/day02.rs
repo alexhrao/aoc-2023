@@ -1,7 +1,7 @@
 use super::Day;
 use std::{fs, ops::AddAssign, str::FromStr};
 
-pub struct Day2;
+pub struct Day02;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Cube {
     Blue(usize),
@@ -159,7 +159,7 @@ impl FromStr for Game {
     }
 }
 
-impl Day for Day2 {
+impl Day for Day02 {
     fn task1(&self, file: &std::path::Path) {
         let games: Vec<Game> = fs::read_to_string(file)
             .unwrap()

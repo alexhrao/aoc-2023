@@ -2,7 +2,7 @@ use std::fs;
 
 use super::Day;
 
-pub struct Day3;
+pub struct Day03;
 
 #[derive(Debug, Clone, Copy)]
 struct Part {
@@ -72,7 +72,7 @@ impl Schematic {
     }
 }
 
-impl Day for Day3 {
+impl Day for Day03 {
     fn task1(&self, file: &std::path::Path) {
         let s = Schematic::from_rows(
             fs::read_to_string(file)

@@ -2,7 +2,7 @@ use std::fs;
 
 use super::Day;
 
-pub struct Day6;
+pub struct Day06;
 
 fn num_ways_to_win(race: (usize, usize)) -> usize {
     // Naive. Just look at all possible races
@@ -10,7 +10,7 @@ fn num_ways_to_win(race: (usize, usize)) -> usize {
     (1..time).filter(|t| ((time - t) * t) > dist).count()
 }
 
-impl Day for Day6 {
+impl Day for Day06 {
     fn task1(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
         let mut lines = backing.lines();

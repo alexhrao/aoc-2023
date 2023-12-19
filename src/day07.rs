@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fs, str::FromStr};
 
 use super::Day;
-pub struct Day7;
+pub struct Day07;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Card {
@@ -359,7 +359,7 @@ impl PartialOrd for WildHand {
     }
 }
 
-impl Day for Day7 {
+impl Day for Day07 {
     fn task1(&self, file: &std::path::Path) {
         let mut hands: Vec<Hand> = fs::read_to_string(file)
             .unwrap()

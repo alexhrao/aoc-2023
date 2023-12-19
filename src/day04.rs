@@ -2,7 +2,7 @@ use std::{fs, str::FromStr};
 
 use super::Day;
 
-pub struct Day4;
+pub struct Day04;
 
 #[derive(Debug, Clone)]
 struct Card {
@@ -46,7 +46,7 @@ impl FromStr for Card {
     }
 }
 
-impl Day for Day4 {
+impl Day for Day04 {
     fn task1(&self, file: &std::path::Path) {
         let cards: Vec<Card> = fs::read_to_string(file)
             .unwrap()

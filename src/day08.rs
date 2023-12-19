@@ -4,7 +4,7 @@ use super::Day;
 use gcd::{self, Gcd};
 use regex::Regex;
 
-pub struct Day8;
+pub struct Day08;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Direction {
@@ -70,7 +70,7 @@ fn traverse_ghost(dirs: &[Direction], map: &HashMap<&str, (&str, &str)>) -> usiz
     ans
 }
 
-impl Day for Day8 {
+impl Day for Day08 {
     fn task1(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
 
