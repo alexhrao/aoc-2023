@@ -2,6 +2,14 @@ use clap::Parser;
 use std::path::{Path, PathBuf};
 
 pub mod day01;
+pub mod day02;
+pub mod day03;
+pub mod day04;
+pub mod day05;
+pub mod day06;
+pub mod day07;
+pub mod day08;
+pub mod day09;
 pub mod day10;
 pub mod day11;
 pub mod day12;
@@ -11,14 +19,6 @@ pub mod day15;
 pub mod day16;
 pub mod day17;
 pub mod day18;
-pub mod day02;
-pub mod day03;
-pub mod day04;
-pub mod day05;
-pub mod day06;
-pub mod day07;
-pub mod day08;
-pub mod day09;
 
 pub trait Day {
     fn task1(&self, file: &Path);
@@ -37,15 +37,15 @@ struct Args {
 fn main() {
     let args = Args::parse();
     let day: Box<dyn Day> = match args.day {
-        01 => Box::new(day01::Day01 {}),
-        02 => Box::new(day02::Day02 {}),
-        03 => Box::new(day03::Day03 {}),
-        04 => Box::new(day04::Day04 {}),
-        05 => Box::new(day05::Day05 {}),
-        06 => Box::new(day06::Day06 {}),
-        07 => Box::new(day07::Day07 {}),
-        08 => Box::new(day08::Day08 {}),
-        09 => Box::new(day09::Day09 {}),
+        1 => Box::new(day01::Day01 {}),
+        2 => Box::new(day02::Day02 {}),
+        3 => Box::new(day03::Day03 {}),
+        4 => Box::new(day04::Day04 {}),
+        5 => Box::new(day05::Day05 {}),
+        6 => Box::new(day06::Day06 {}),
+        7 => Box::new(day07::Day07 {}),
+        8 => Box::new(day08::Day08 {}),
+        9 => Box::new(day09::Day09 {}),
         10 => Box::new(day10::Day10 {}),
         11 => Box::new(day11::Day11 {}),
         12 => Box::new(day12::Day12 {}),
@@ -57,9 +57,12 @@ fn main() {
         18 => Box::new(day18::Day18 {}),
         d => panic!("Unrecognized day {}", d),
     };
-    if let Some(t1) = args.task1_file {
-        day.task1(&t1);
+    if args.task1_file.is_none() {
+        day.task1(&args.task1_file.unwrap());
     }
+    // if let Some(t1) = args.task1_file {
+    //     day.task1(&t1);
+    // }
     if let Some(t2) = args.task2_file {
         day.task2(&t2);
     }
