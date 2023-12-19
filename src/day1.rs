@@ -1,15 +1,12 @@
 use super::Day;
-use once_cell::sync::Lazy;
 use std::fs;
 
 pub struct Day1 {}
 
-static NUMS: Lazy<Vec<&'static str>> = Lazy::new(|| {
-    vec![
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3", "4",
-        "5", "6", "7", "8", "9",
-    ]
-});
+const NUMS: &[&str] = &[
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3", "4",
+    "5", "6", "7", "8", "9",
+];
 
 fn word_to_num(word: &str) -> u32 {
     let idx = NUMS.iter().position(|&w| w == word).unwrap() as u32;

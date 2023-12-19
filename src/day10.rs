@@ -5,7 +5,7 @@ use super::Day;
 pub struct Day10;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Tile {
+pub enum Tile {
     NS,
     EW,
     NE,
@@ -29,6 +29,25 @@ impl From<char> for Tile {
             'S' => Tile::Start,
             _ => unreachable!(),
         }
+    }
+}
+
+impl std::fmt::Display for Tile {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Tile::Ground => '.',
+                Tile::NS => '|',
+                Tile::EW => '-',
+                Tile::NE => 'L',
+                Tile::NW => 'J',
+                Tile::SW => '7',
+                Tile::SE => 'F',
+                Tile::Start => 'S',
+            }
+        )
     }
 }
 
@@ -240,27 +259,33 @@ impl Day for Day10 {
         tiles[r][c] = t;
         let counts = traverse((r, c), &tiles);
         let path: Vec<_> = counts.keys().map(|&(r, c)| ((r, c), tiles[r][c])).collect();
-        let grid = Grid::from(&path);
+        let grid = Grid::from(path);
         println!("{}", grid.num_contained());
     }
 }
 
-#[derive(Debug, Clone)]
-struct Grid {
+#[derive(Clone)]
+pub struct Grid {
     grid: Vec<Vec<Tile>>,
 }
 
-impl Grid {
-    pub fn from(path: &[((usize, usize), Tile)]) -> Self {
+impl<I> From<I> for Grid
+where
+    I: IntoIterator<Item = ((usize, usize), Tile)>,
+{
+    fn from(value: I) -> Self {
+        let path: Vec<_> = value.into_iter().collect();
         let rows = path.iter().map(|&((r, _), _)| r).max().unwrap() + 1;
         let cols = path.iter().map(|&((_, c), _)| c).max().unwrap() + 1;
         let mut grid = vec![vec![Tile::Ground; cols]; rows];
-        for &((r, c), t) in path {
+        for ((r, c), t) in path {
             grid[r][c] = t;
         }
         Grid { grid }
     }
+}
 
+impl Grid {
     pub fn num_contained(&self) -> usize {
         let mut count = 0;
         for r in 0..self.grid.len() {
@@ -309,5 +334,17 @@ impl std::fmt::Display for Grid {
             out.push('\n');
         }
         f.write_str(&out)
+    }
+}
+
+impl std::fmt::Debug for Grid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for row in &self.grid {
+            for t in row {
+                write!(f, "{}", t)?;
+            }
+            writeln!(f)?;
+        }
+        Ok(())
     }
 }
