@@ -11,7 +11,7 @@ The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repo
 | ❌     | Problem not attempted yet |
 | ✅     | Completed |
 
-### 2023 Solutions
+## 2023 Solutions
 | Day              | Part 1 | Part 2 | Commentary |
 |------------------|--------|--------|------------|
 | [01](src/day01.rs) | ✅ | ✅ |  |
@@ -32,3 +32,4 @@ The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repo
 | [16](src/day16.rs) | ✅ | ✅ |  |
 | [17](src/day17.rs) | ❌ | ❌ | Damn this one is hard |
 | [18](src/day18.rs) | ✅ | ✅ | I was basically able to get this myself; I just needed some help on fixing the area for part 2. Happy to be able to use Day 10 for part 1! |
+| [19](src/day19.rs) | ✅ | ✅ | Part 1 was a fun trip down parsing lane, and I got to practice borrowing instead of cloning. Part 2 was insane but I'm so proud to say I got it right the first try! Of note, I never had to worry about "paring down" two ranges that were equal. That's what I was scared of, but thankfully I didn't have to! |
