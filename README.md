@@ -31,6 +31,6 @@ The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repo
 | [15](src/day15.rs) | ✅ | ✅ |  |
 | [16](src/day16.rs) | ✅ | ✅ |  |
 | [17](src/day17.rs) | ❌ | ❌ | Damn this one is hard |
-| [18](src/day18.rs) | ✅ | ✅ | I was basically able to get this myself; I just needed some help on fixing the area for part 2. Happy to be able to use Day 10 for part 1! |
+| [18](src/day18.rs) | ✅ | ✅ | I was basically able to get this myself; I just needed some time off to see how to fix the area for part 2. Happy to be able to use Day 10 for part 1! |
 | [19](src/day19.rs) | ✅ | ✅ | Part 1 was a fun trip down parsing lane, and I got to practice borrowing instead of cloning. Part 2 was insane but I'm so proud to say I got it right the first try! Of note, I never had to worry about "paring down" two ranges that were equal. That's what I was scared of, but thankfully I didn't have to! |
-| [20](src/day20.rs) | ✅ | ❌ | The first part was really fun, figuring out how best to please the borrow checker, and in the process learning more about my previous (invalid!) assumptions. I love building a simulator! The second part... not so much... |
+| [20](src/day20.rs) | ✅ | ✅ | The first part was really fun, figuring out how best to please the borrow checker, and in the process learning more about my previous (invalid!) assumptions. I love building a simulator! The second part was hard until it wasn't. It's a trick that I think may have been used in a similar fashion earlier, but basically you see when the inputs of the input to rx is satisfied individually; then multiply the cycles that each is satisfied to get the cycle overall the input will be satisfied. Really interesting! |

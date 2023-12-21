@@ -4,6 +4,10 @@ use regex::Regex;
 
 use super::Day;
 
+const SOURCE: &str = "button";
+const BROADCASTER: &str = "broadcaster";
+const OUTPUT: &str = "rx";
+
 pub struct Day20;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -49,7 +53,7 @@ struct Module<'a> {
 
 impl<'a> Module<'a> {
     pub fn new(name: &'a str) -> Module<'a> {
-        if name == "broadcaster" {
+        if name == BROADCASTER {
             Module {
                 name,
                 module_type: ModuleType::Broadcaster,
@@ -124,13 +128,22 @@ fn parse_modules(backing: &str) -> HashMap<&str, Module<'_>> {
     mods
 }
 
-fn button_press(mods: &mut HashMap<&str, Module<'_>>) -> (usize, usize) {
+fn button_press<'a>(mods: &mut HashMap<&str, Module<'a>>) -> ((usize, usize), Vec<&'a str>) {
     // Button => Broadcaster => Everyone else
     let mut queues = HashMap::new();
     let mut lows = 0;
     let mut highs = 0;
+    // Who do we need to see?
+    let who = mods
+        .values()
+        .find(|m| m.outputs.contains(&OUTPUT))
+        .unwrap()
+        .name;
+
+    let mut seen = vec![];
     // Kick it off
-    queues.insert("broadcaster", vec![SignalSource("button", Signal::Low)]);
+    queues.insert(BROADCASTER, vec![SignalSource(SOURCE, Signal::Low)]);
+
     while queues.values().any(|q| !q.is_empty()) {
         // loop over the queues
         let mut next = HashMap::new();
@@ -147,6 +160,9 @@ fn button_press(mods: &mut HashMap<&str, Module<'_>>) -> (usize, usize) {
                     // This module may or may not exist, so only kick it if
                     // we have someone to kick!
                     if let Some(s) = m.kick(sig) {
+                        if m.outputs.contains(&who) && s == Signal::High {
+                            seen.push(m.name);
+                        }
                         for out in &m.outputs {
                             next.entry(*out)
                                 .or_insert(vec![])
@@ -158,7 +174,8 @@ fn button_press(mods: &mut HashMap<&str, Module<'_>>) -> (usize, usize) {
         }
         queues = next;
     }
-    (lows, highs)
+    // println!("{:?}", mods["bq"]);
+    ((lows, highs), seen)
 }
 
 impl Day for Day20 {
@@ -168,14 +185,36 @@ impl Day for Day20 {
 
         let mut lows = 0;
         let mut highs = 0;
-
         for _ in 0..1000 {
-            let (l, h) = button_press(&mut mods);
+            let ((l, h), _) = button_press(&mut mods);
             lows += l;
             highs += h;
         }
-
         println!("{}", lows * highs);
     }
-    fn task2(&self, _file: &std::path::Path) {}
+    fn task2(&self, file: &std::path::Path) {
+        let backing = fs::read_to_string(file).unwrap();
+        let mut mods = parse_modules(&backing);
+
+        let mut seen = HashMap::new();
+        let check = mods
+            .values()
+            .find(|m| m.outputs.contains(&OUTPUT))
+            .unwrap()
+            .inputs
+            .len();
+        // Clocks start at 1 in our world
+        for c in 1usize.. {
+            let (_, s) = button_press(&mut mods);
+            for s in s {
+                seen.entry(s).or_insert(c);
+            }
+            if seen.len() == check {
+                break;
+            }
+        }
+        // Maybe I'll get lucky and it's not the least common multiple
+        let total = seen.values().product::<usize>();
+        println!("{}", total);
+    }
 }
