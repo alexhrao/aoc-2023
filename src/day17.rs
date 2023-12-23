@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::{collections::HashMap, fs};
 
 use super::Day;
@@ -5,6 +6,17 @@ use petgraph::algo::dijkstra;
 use petgraph::Graph;
 
 pub struct Day17;
+
+const T1_MAX_STRAIGHT: usize = 3;
+const T2_MIN_STRAIGHT: usize = 4;
+const T2_MAX_STRAIGHT: usize = 10;
+const DIRS: [Direction; 4] = [
+    Direction::Up,
+    Direction::Down,
+    Direction::Left,
+    Direction::Right,
+];
+const START_DIRS: [Direction; 2] = [Direction::Down, Direction::Right];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Direction {
@@ -71,21 +83,122 @@ impl Day for Day17 {
             .map(|l| l.chars().map(|c| c.to_string().parse().unwrap()).collect())
             .collect();
         let mut graph = Graph::<_, _>::new();
-        let dirs = [
-            Direction::Up,
-            Direction::Down,
-            Direction::Left,
-            Direction::Right,
-        ];
         let mut nodes = Vec::with_capacity(blocks.len());
         for (r, block_row) in blocks.iter().enumerate() {
             let mut row = Vec::with_capacity(blocks[r].len());
             for c in 0..block_row.len() {
-                let mut col = HashMap::with_capacity(dirs.len());
-                for d in &dirs {
+                let mut col = HashMap::with_capacity(DIRS.len());
+                for d in &DIRS {
                     let mut stack = Vec::with_capacity(3);
                     // Could be one, two, or three
-                    for i in 1..=3 {
+                    for i in 1..=T1_MAX_STRAIGHT {
+                        let idx = graph.add_node(Block {
+                            count: i,
+                            dir: *d,
+                            posn: (r, c),
+                        });
+                        stack.push(idx);
+                    }
+                    col.insert(*d, stack);
+                }
+                row.push(col);
+            }
+            nodes.push(row);
+        }
+        let nodes = nodes;
+        let dims = (blocks.len(), blocks[0].len());
+
+        // Now go through to make edges
+        for r in 0..blocks.len() {
+            for c in 0..blocks[r].len() {
+                for d in &DIRS {
+                    for i in 1..T1_MAX_STRAIGHT {
+                        // I'm not at the top. I can connect to i + 1,
+                        // with the weight of the NEXT one in this same direction...
+                        // at least, if I'm not at the edge
+                        if let Some((nr, nc)) = d.next((r, c), dims) {
+                            // wt is how much it costs to get to the next one.
+                            let wt = blocks[nr][nc];
+                            graph.add_edge(nodes[r][c][d][i - 1], nodes[nr][nc][d][i], wt);
+                        }
+                        // I can always go the orthogonal directions...
+                        for ortho in d.orthogonals() {
+                            // ... or can I? Check!
+                            if let Some((nr, nc)) = ortho.next((r, c), dims) {
+                                let wt = blocks[nr][nc];
+                                graph.add_edge(nodes[r][c][d][i - 1], nodes[nr][nc][&ortho][0], wt);
+                            }
+                        }
+                    }
+                    for ortho in d.orthogonals() {
+                        // ... or can I? Check!
+                        if let Some((nr, nc)) = ortho.next((r, c), dims) {
+                            let wt = blocks[nr][nc];
+                            graph.add_edge(
+                                nodes[r][c][d].last().copied().unwrap(),
+                                nodes[nr][nc][&ortho][0],
+                                wt,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        let graph = graph;
+
+        let end_nodes: HashSet<_> = nodes
+            .last()
+            .unwrap()
+            .last()
+            .unwrap()
+            .values()
+            .flatten()
+            .copied()
+            .collect();
+
+        let total = nodes
+            .first()
+            .unwrap()
+            .first()
+            .unwrap()
+            .iter()
+            .filter_map(|(d, idx)| {
+                if START_DIRS.contains(d) {
+                    Some(idx[0])
+                } else {
+                    None
+                }
+            })
+            .flat_map(|n| {
+                dijkstra(&graph, n, None, |e| *e.weight())
+                    .into_iter()
+                    .filter_map(|(n_idx, cost)| {
+                        if end_nodes.contains(&n_idx) {
+                            Some(cost)
+                        } else {
+                            None
+                        }
+                    })
+            })
+            .min()
+            .unwrap();
+        println!("{:?}", total);
+    }
+    fn task2(&self, file: &std::path::Path) {
+        let blocks: Vec<Vec<usize>> = fs::read_to_string(file)
+            .unwrap()
+            .lines()
+            .map(|l| l.chars().map(|c| c.to_string().parse().unwrap()).collect())
+            .collect();
+        let mut graph = Graph::<_, _>::new();
+        let mut nodes = Vec::with_capacity(blocks.len());
+        for (r, block_row) in blocks.iter().enumerate() {
+            let mut row = Vec::with_capacity(blocks[r].len());
+            for c in 0..block_row.len() {
+                let mut col = HashMap::with_capacity(DIRS.len());
+                for d in &DIRS {
+                    let mut stack = Vec::with_capacity(3);
+                    for i in 1..=10 {
                         let idx = graph.add_node(Block {
                             count: i,
                             dir: *d,
@@ -105,17 +218,22 @@ impl Day for Day17 {
         // Now go through to make edges
         for r in 0..blocks.len() {
             for c in 0..blocks[r].len() {
-                for d in &dirs {
-                    for i in 1..=3 {
-                        if i != 3 {
-                            // I'm not at the top. I can connect to i + 1,
-                            // with the weight of the NEXT one in this same direction...
-                            // at least, if I'm not at the edge
-                            if let Some((nr, nc)) = d.next((r, c), dims) {
-                                // wt is how much it costs to get to the next one.
-                                let wt = blocks[nr][nc];
-                                graph.add_edge(nodes[r][c][d][i - 1], nodes[nr][nc][d][i], wt);
-                            }
+                for d in &DIRS {
+                    for i in 1..T2_MIN_STRAIGHT {
+                        // HAVE to go in the same direction!
+                        if let Some((nr, nc)) = d.next((r, c), dims) {
+                            let wt = blocks[nr][nc];
+                            graph.add_edge(nodes[r][c][d][i - 1], nodes[nr][nc][d][i], wt);
+                        }
+                    }
+                    for i in T2_MIN_STRAIGHT..T2_MAX_STRAIGHT {
+                        // I'm not at the top. I can connect to i + 1,
+                        // with the weight of the NEXT one in this same direction...
+                        // at least, if I'm not at the edge
+                        if let Some((nr, nc)) = d.next((r, c), dims) {
+                            // wt is how much it costs to get to the next one.
+                            let wt = blocks[nr][nc];
+                            graph.add_edge(nodes[r][c][d][i - 1], nodes[nr][nc][d][i], wt);
                         }
                         // I can always go the orthogonal directions...
                         for ortho in d.orthogonals() {
@@ -126,17 +244,49 @@ impl Day for Day17 {
                             }
                         }
                     }
+                    for ortho in d.orthogonals() {
+                        // ... or can I? Check!
+                        if let Some((nr, nc)) = ortho.next((r, c), dims) {
+                            let wt = blocks[nr][nc];
+                            graph.add_edge(
+                                nodes[r][c][d].last().copied().unwrap(),
+                                nodes[nr][nc][&ortho][0],
+                                wt,
+                            );
+                        }
+                    }
                 }
             }
         }
-        let mut wts = vec![];
-        for start_dir in &[Direction::Right, Direction::Down] {
-            let dists = dijkstra(&graph, nodes[0][0][start_dir][0], None, |e| *e.weight());
-            wts.extend(dirs.iter().flat_map(|d| {
-                (0..3).filter_map(|i| dists.get(&nodes[dims.0 - 1][dims.1 - 1][d][i]).copied())
-            }));
-        }
-        println!("{:?}", wts.into_iter().min().unwrap());
+        let graph = graph;
+        let end_nodes: HashSet<_> = nodes[nodes.len() - 1][nodes.len() - 1]
+            .values()
+            .flatten()
+            .copied()
+            .collect();
+
+        let total = nodes[0][0]
+            .iter()
+            .filter_map(|(d, idx)| {
+                if START_DIRS.contains(d) {
+                    Some(idx[0])
+                } else {
+                    None
+                }
+            })
+            .flat_map(|n| {
+                dijkstra(&graph, n, None, |e| *e.weight())
+                    .into_iter()
+                    .filter_map(|(n_idx, cost)| {
+                        if end_nodes.contains(&n_idx) {
+                            Some(cost)
+                        } else {
+                            None
+                        }
+                    })
+            })
+            .min()
+            .unwrap();
+        println!("{:?}", total);
     }
-    fn task2(&self, _file: &std::path::Path) {}
 }
