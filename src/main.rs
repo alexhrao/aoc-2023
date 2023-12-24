@@ -22,6 +22,7 @@ pub mod day18;
 pub mod day19;
 pub mod day20;
 pub mod day22;
+pub mod day24;
 
 pub trait Day {
     fn task1(&self, file: &Path);
@@ -61,6 +62,7 @@ fn main() {
         19 => Box::new(day19::Day19 {}),
         20 => Box::new(day20::Day20 {}),
         22 => Box::new(day22::Day22 {}),
+        24 => Box::new(day24::Day24 {}),
         d => panic!("Unrecognized day {}", d),
     };
     if let Some(t1) = args.task1_file {
