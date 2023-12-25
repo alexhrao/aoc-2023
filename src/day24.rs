@@ -58,7 +58,8 @@ impl HailStone {
 
 fn in_range(xy: &(f64, f64)) -> bool {
     let &(x, y) = xy;
-    x >= MIN && x <= MAX && y >= MIN && y <= MAX
+    let rng = MIN..=MAX;
+    rng.contains(&x) && rng.contains(&y)
 }
 
 impl Day for Day24 {
@@ -73,17 +74,14 @@ impl Day for Day24 {
             .iter()
             .enumerate()
             .flat_map(|(s1, stone1)| {
-                stones
-                    .iter()
-                    .skip(s1+1)
-                    .filter_map(|stone2| {
-                        let x = stone1.intersect(stone2);
-                        if stone1.in_future(&x) && stone2.in_future(&x) {
-                            Some(x)
-                        } else {
-                            None
-                        }
-                    })
+                stones.iter().skip(s1 + 1).filter_map(|stone2| {
+                    let x = stone1.intersect(stone2);
+                    if stone1.in_future(&x) && stone2.in_future(&x) {
+                        Some(x)
+                    } else {
+                        None
+                    }
+                })
             })
             .filter(in_range)
             .count();
