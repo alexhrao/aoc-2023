@@ -21,6 +21,7 @@ pub mod day17;
 pub mod day18;
 pub mod day19;
 pub mod day20;
+pub mod day21;
 pub mod day22;
 pub mod day24;
 
@@ -61,6 +62,7 @@ fn main() {
         18 => Box::new(day18::Day18 {}),
         19 => Box::new(day19::Day19 {}),
         20 => Box::new(day20::Day20 {}),
+        21 => Box::new(day21::Day21 {}),
         22 => Box::new(day22::Day22 {}),
         24 => Box::new(day24::Day24 {}),
         d => panic!("Unrecognized day {}", d),
