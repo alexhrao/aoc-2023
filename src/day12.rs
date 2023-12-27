@@ -4,7 +4,7 @@ use super::Day;
 
 use rayon::{
     iter::{IntoParallelRefIterator, ParallelIterator},
-    *,
+    str,
 };
 
 pub struct Day12;
@@ -50,17 +50,9 @@ struct Record {
 impl Record {
     pub fn possibilities(&self) -> usize {
         if self.springs.is_empty() {
-            if self.groups.is_empty() {
-                1
-            } else {
-                0
-            }
+            usize::from(self.groups.is_empty())
         } else if self.groups.is_empty() {
-            if self.springs.contains(&Spring::Damaged) {
-                0
-            } else {
-                1
-            }
+            usize::from(!self.springs.contains(&Spring::Damaged))
         } else {
             // At this point, we need to head to the base case.
             let mut result = 0;
@@ -108,17 +100,9 @@ impl Record {
             return *ans;
         }
         if self.springs.is_empty() {
-            if self.groups.is_empty() {
-                1
-            } else {
-                0
-            }
+            usize::from(self.groups.is_empty())
         } else if self.groups.is_empty() {
-            if self.springs.contains(&Spring::Damaged) {
-                0
-            } else {
-                1
-            }
+            usize::from(!self.springs.contains(&Spring::Damaged))
         } else {
             // At this point, we need to head to the base case.
             let mut result = 0;
@@ -167,7 +151,12 @@ impl FromStr for Record {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut split = s.split_whitespace();
-        let springs = split.next().unwrap().chars().map(|c| c.into()).collect();
+        let springs = split
+            .next()
+            .unwrap()
+            .chars()
+            .map(std::convert::Into::into)
+            .collect();
         let groups = split
             .next()
             .unwrap()
@@ -194,7 +183,7 @@ impl Day for Day12 {
             .map(|l| l.parse().unwrap())
             .collect();
         let result = records.iter().map(Record::possibilities).sum::<usize>();
-        println!("{}", result);
+        println!("{result}");
     }
     fn task2(&self, file: &std::path::Path) {
         let records: Vec<Record> = fs::read_to_string(file)
@@ -215,6 +204,6 @@ impl Day for Day12 {
             .par_iter()
             .map(|r| r.memoized_possibilities(&mut HashMap::new()))
             .sum::<usize>();
-        println!("{}", result);
+        println!("{result}");
     }
 }

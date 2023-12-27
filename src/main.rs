@@ -69,7 +69,7 @@ fn main() {
         23 => Box::new(day23::Day23 {}),
         24 => Box::new(day24::Day24 {}),
         25 => Box::new(day25::Day25 {}),
-        d => panic!("Unrecognized day {}", d),
+        d => panic!("Unrecognized day {d}"),
     };
     if let Some(t1) = args.task1_file {
         day.task1(&t1);

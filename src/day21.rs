@@ -120,14 +120,14 @@ impl FromStr for Garden {
 impl Day for Day21 {
     fn task1(&self, file: &std::path::Path) {
         let mut garden: Garden = fs::read_to_string(file).unwrap().parse().unwrap();
-        for _ in 0..26501365 {
+        for _ in 0..26_501_365 {
             garden.step();
         }
         println!("{}", garden.current.len());
     }
     fn task2(&self, file: &std::path::Path) {
         let mut garden: Garden = fs::read_to_string(file).unwrap().parse().unwrap();
-        for _ in 0..26501365 {
+        for _ in 0..26_501_365 {
             garden.step();
         }
     }

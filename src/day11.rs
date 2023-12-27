@@ -11,8 +11,8 @@ fn expand(galaxies: &[(usize, usize)], replace: usize) -> Vec<(usize, usize)> {
     let max_cols = *occ_cols.iter().max().unwrap();
     let mut exp_rows: Vec<_> = (0..=max_rows).filter(|r| !occ_rows.contains(r)).collect();
     let mut exp_cols: Vec<_> = (0..=max_cols).filter(|c| !occ_cols.contains(c)).collect();
-    exp_rows.sort();
-    exp_cols.sort();
+    exp_rows.sort_unstable();
+    exp_cols.sort_unstable();
 
     let mut out = galaxies.to_vec();
     // Now, for each expanded row, add an extra row to anyone greater than me
@@ -71,7 +71,7 @@ impl Day for Day11 {
             .collect();
         println!("{}", galaxies.len());
 
-        let shifted = expand(&galaxies, 1000000);
+        let shifted = expand(&galaxies, 1_000_000);
         println!("{}", shifted.len());
         let mut dists = vec![];
         for g1 in 0..shifted.len() {

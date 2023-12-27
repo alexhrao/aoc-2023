@@ -32,10 +32,10 @@ impl From<char> for Direction {
 impl FromStr for Direction {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() != 1 {
-            Err(())
-        } else {
+        if s.len() == 1 {
             Ok(s.chars().next().unwrap().into())
+        } else {
+            Err(())
         }
     }
 }
@@ -74,7 +74,7 @@ impl std::ops::Add<&PlanRecord> for (isize, isize) {
 impl FromStr for PlanRecord {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let re = Regex::new(r#"([RDLU]) (\d+) \(#([0-9a-f]{6})\)"#).unwrap();
+        let re = Regex::new(r"([RDLU]) (\d+) \(#([0-9a-f]{6})\)").unwrap();
         let caps = re.captures(s).unwrap();
         let dir = caps.get(1).unwrap().as_str().parse().unwrap();
         let len = caps.get(2).unwrap().as_str().parse().unwrap();
@@ -185,6 +185,6 @@ impl Day for Day18 {
             .sum::<isize>();
         // We've only added half the perimeter! And we haven't included the top left square
         let out = area + perim / 2 + 1;
-        println!("{}", out);
+        println!("{out}");
     }
 }

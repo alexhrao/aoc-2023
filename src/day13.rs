@@ -74,9 +74,9 @@ fn try_smudges(puzzle: &str) -> Reflection {
     let out = puzzle.char_indices().find_map(|(c, ch)| {
         let mut changed = String::from(puzzle);
         if ch == '.' {
-            changed.replace_range(c..c + 1, "#");
+            changed.replace_range(c..=c, "#");
         } else if ch == '#' {
-            changed.replace_range(c..c + 1, ".");
+            changed.replace_range(c..=c, ".");
         } else {
             return None;
         }
@@ -97,7 +97,7 @@ impl Day for Day13 {
                 Reflection::Vertical(c, _) => c,
             })
             .sum::<usize>();
-        println!("{}", soln);
+        println!("{soln}");
     }
     fn task2(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
@@ -109,6 +109,6 @@ impl Day for Day13 {
                 Reflection::Vertical(c, _) => c,
             })
             .sum::<usize>();
-        println!("{}", soln);
+        println!("{soln}");
     }
 }

@@ -101,7 +101,7 @@ impl<'a> From<&'a str> for Workflow<'a> {
         let name = split.next().unwrap();
         let mut rules: Vec<&str> = split.next().unwrap().split(',').collect();
         let fallback = rules.pop().unwrap();
-        let rules = rules.into_iter().map(|r| r.into()).collect();
+        let rules = rules.into_iter().map(std::convert::Into::into).collect();
         Self {
             name,
             rules,
@@ -261,9 +261,8 @@ impl PartRange {
             let rng = self[field];
             if rng.0 > rng.1 {
                 return 0;
-            } else {
-                out *= rng.1 - rng.0 + 1;
             }
+            out *= rng.1 - rng.0 + 1;
         }
         out
     }
@@ -371,7 +370,7 @@ impl Day for Day19 {
                 }
             })
             .sum();
-        println!("{}", total);
+        println!("{total}");
     }
     fn task2(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();
@@ -389,6 +388,6 @@ impl Day for Day19 {
             .map(PartRange::from)
             .map(|pr| pr.num_possibilities())
             .sum::<usize>();
-        println!("{}", total);
+        println!("{total}");
     }
 }

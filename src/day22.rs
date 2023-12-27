@@ -25,11 +25,8 @@ impl Brick {
     pub fn xy_intersects(&self, other: &Brick) -> bool {
         // For it NOT to rest, either the x range is completely different,
         // or the y range is.
-        let (x11, y11, _) = self.start;
-        let (x12, y12, _) = self.end;
-        let (x21, y21, _) = other.start;
-        let (x22, y22, _) = other.end;
-        !(!intersects((x11, x12), (x21, x22)) || !intersects((y11, y12), (y21, y22)))
+        !(!intersects((self.start.0, self.end.0), (other.start.0, other.end.0))
+            || !intersects((self.start.1, self.end.1), (other.start.1, other.end.1)))
     }
 }
 
@@ -249,7 +246,7 @@ impl Day for Day22 {
             .skip(1)
             .filter(|n| n.is_redundant(&tree))
             .count();
-        println!("{}", disintegrated);
+        println!("{disintegrated}");
     }
     fn task2(&self, file: &std::path::Path) {
         let mut bricks: Vec<Brick> = std::iter::once(Brick::plane(0))
@@ -285,30 +282,30 @@ mod test {
     }
 
     #[test]
-    pub fn test_bricks() {
-        let a = Brick {
+    pub fn bricks() {
+        let brick_a = Brick {
             start: (1, 0, 1),
             end: (1, 2, 1),
         };
-        let b = Brick {
+        let brick_b = Brick {
             start: (0, 0, 2),
             end: (2, 0, 2),
         };
-        let c = Brick {
+        let brick_c = Brick {
             start: (0, 2, 3),
             end: (2, 2, 3),
         };
-        let f = Brick {
+        let brick_f = Brick {
             start: (0, 1, 4),
             end: (2, 1, 4),
         };
-        let g = Brick {
+        let brick_g = Brick {
             start: (1, 1, 5),
             end: (1, 1, 6),
         };
-        assert!(a.xy_intersects(&b));
-        assert!(!b.xy_intersects(&c));
-        assert!(g.xy_intersects(&f));
-        assert_eq!(f.end.2, g.start.2 - 1);
+        assert!(brick_a.xy_intersects(&brick_b));
+        assert!(!brick_b.xy_intersects(&brick_c));
+        assert!(brick_g.xy_intersects(&brick_f));
+        assert_eq!(brick_f.end.2, brick_g.start.2 - 1);
     }
 }

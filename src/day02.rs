@@ -19,7 +19,7 @@ impl FromStr for Cube {
         } else if s.ends_with("green") {
             Ok(Cube::Green(num))
         } else {
-            panic!("Unknown cube {}", s)
+            panic!("Unknown cube {s}")
         }
     }
 }
@@ -53,17 +53,14 @@ impl SetSummary {
     }
 
     pub fn mult(&self) -> usize {
-        let r = match self.red {
-            Cube::Red(r) => r,
-            _ => panic!(),
+        let Cube::Red(r) = self.red else {
+            unreachable!()
         };
-        let g = match self.green {
-            Cube::Green(g) => g,
-            _ => panic!(),
+        let Cube::Green(g) = self.green else {
+            unreachable!()
         };
-        let b = match self.blue {
-            Cube::Blue(b) => b,
-            _ => panic!(),
+        let Cube::Blue(b) = self.blue else {
+            unreachable!()
         };
         r * g * b
     }
@@ -186,7 +183,7 @@ impl Day for Day02 {
                 }
             }
         }
-        println!("{}", all);
+        println!("{all}");
     }
     fn task2(&self, file: &std::path::Path) {
         let games: Vec<Game> = fs::read_to_string(file)
@@ -196,7 +193,8 @@ impl Day for Day02 {
             .collect();
         let mut sum = 0;
         for game in &games {
-            let summaries: Vec<SetSummary> = game.sets.iter().map(|s| s.into()).collect();
+            let summaries: Vec<SetSummary> =
+                game.sets.iter().map(std::convert::Into::into).collect();
             let mut m: SetSummary = summaries
                 .iter()
                 .max_by_key(|&ss| ss.red)
@@ -217,6 +215,6 @@ impl Day for Day02 {
                 .into();
             sum += m.mult();
         }
-        println!("{}", sum);
+        println!("{sum}");
     }
 }

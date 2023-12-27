@@ -27,7 +27,7 @@ enum Direction {
 }
 
 impl Direction {
-    pub fn next(&self, posn: (usize, usize), dims: (usize, usize)) -> Option<(usize, usize)> {
+    pub fn next(self, posn: (usize, usize), dims: (usize, usize)) -> Option<(usize, usize)> {
         let (r, c) = posn;
         let (rows, cols) = dims;
         match self {
@@ -61,10 +61,10 @@ impl Direction {
             }
         }
     }
-    pub fn orthogonals(&self) -> [Direction; 2] {
+    pub fn orthogonals(self) -> [Direction; 2] {
         match self {
-            &Direction::Up | &Direction::Down => [Direction::Left, Direction::Right],
-            &Direction::Left | &Direction::Right => [Direction::Up, Direction::Down],
+            Direction::Up | Direction::Down => [Direction::Left, Direction::Right],
+            Direction::Left | Direction::Right => [Direction::Up, Direction::Down],
         }
     }
 }
@@ -182,7 +182,7 @@ impl Day for Day17 {
             })
             .min()
             .unwrap();
-        println!("{:?}", total);
+        println!("{total:?}");
     }
     fn task2(&self, file: &std::path::Path) {
         let blocks: Vec<Vec<usize>> = fs::read_to_string(file)
@@ -287,6 +287,6 @@ impl Day for Day17 {
             })
             .min()
             .unwrap();
-        println!("{:?}", total);
+        println!("{total:?}");
     }
 }

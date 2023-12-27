@@ -13,9 +13,8 @@ fn diff(hist: &[isize]) -> Vec<Vec<isize>> {
         out.push(diff);
         if done {
             break out;
-        } else {
-            seed = &out.last().unwrap();
         }
+        seed = &out.last().unwrap();
     }
 }
 
@@ -56,7 +55,7 @@ impl Day for Day09 {
             .map(build_out)
             .map(|d| *d.last().unwrap().last().unwrap())
             .sum::<isize>();
-        println!("{:?}", total);
+        println!("{total:?}");
     }
     fn task2(&self, file: &std::path::Path) {
         let hists: Vec<Vec<isize>> = fs::read_to_string(file)
@@ -70,6 +69,6 @@ impl Day for Day09 {
             .map(build_in)
             .map(|d| *d.last().unwrap().first().unwrap())
             .sum::<isize>();
-        println!("{:?}", total);
+        println!("{total:?}");
     }
 }

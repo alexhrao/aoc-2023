@@ -33,26 +33,26 @@ enum Direction {
 }
 
 impl Direction {
-    pub fn add(&self, posn: (usize, usize), tiles: &[Vec<Tile>]) -> Option<(usize, usize)> {
-        if self == &Direction::Up {
+    pub fn add(self, posn: (usize, usize), tiles: &[Vec<Tile>]) -> Option<(usize, usize)> {
+        if self == Direction::Up {
             if posn.0 == 0 {
                 None
             } else {
                 Some((posn.0 - 1, posn.1))
             }
-        } else if self == &Direction::Down {
+        } else if self == Direction::Down {
             if posn.0 == (tiles.len() - 1) {
                 None
             } else {
                 Some((posn.0 + 1, posn.1))
             }
-        } else if self == &Direction::Left {
+        } else if self == Direction::Left {
             if posn.1 == 0 {
                 None
             } else {
                 Some((posn.0, posn.1 - 1))
             }
-        } else if self == &Direction::Right {
+        } else if self == Direction::Right {
             if posn.1 == (tiles[0].len() - 1) {
                 None
             } else {
@@ -171,7 +171,7 @@ impl Day for Day16 {
         let tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
             .unwrap()
             .lines()
-            .map(|l| l.chars().map(|c| c.into()).collect())
+            .map(|l| l.chars().map(std::convert::Into::into).collect())
             .collect();
         let mut memo = HashSet::new();
         println!(
@@ -183,7 +183,7 @@ impl Day for Day16 {
         let tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
             .unwrap()
             .lines()
-            .map(|l| l.chars().map(|c| c.into()).collect())
+            .map(|l| l.chars().map(std::convert::Into::into).collect())
             .collect();
         let total = (0..tiles.len())
             .flat_map(|c| {
@@ -214,6 +214,6 @@ impl Day for Day16 {
             .map(|r| get_energized(&r, &tiles, &mut HashSet::new()).len())
             .max()
             .unwrap();
-        println!("{}", total);
+        println!("{total}");
     }
 }

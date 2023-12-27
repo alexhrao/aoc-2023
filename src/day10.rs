@@ -85,32 +85,32 @@ impl std::ops::Add<&Direction> for (usize, usize) {
     }
 }
 
-fn find_connection(tile: &Tile, relationship: Direction) -> bool {
+fn find_connection(tile: Tile, relationship: Direction) -> bool {
     match relationship {
-        Direction::West => tile == &Tile::EW || tile == &Tile::NE || tile == &Tile::SE,
-        Direction::East => tile == &Tile::EW || tile == &Tile::NW || tile == &Tile::SW,
-        Direction::North => tile == &Tile::NS || tile == &Tile::SE || tile == &Tile::SW,
-        Direction::South => tile == &Tile::NS || tile == &Tile::NE || tile == &Tile::NW,
+        Direction::West => tile == Tile::EW || tile == Tile::NE || tile == Tile::SE,
+        Direction::East => tile == Tile::EW || tile == Tile::NW || tile == Tile::SW,
+        Direction::North => tile == Tile::NS || tile == Tile::SE || tile == Tile::SW,
+        Direction::South => tile == Tile::NS || tile == Tile::NE || tile == Tile::NW,
     }
 }
 
-fn is_connected(start: &Tile, end: &Tile, relationship: Direction) -> bool {
+fn is_connected(start: Tile, end: Tile, relationship: Direction) -> bool {
     match relationship {
         Direction::West => {
-            (end == &Tile::EW || end == &Tile::NE || end == &Tile::SE)
-                && (start == &Tile::EW || start == &Tile::NW || start == &Tile::SW)
+            (end == Tile::EW || end == Tile::NE || end == Tile::SE)
+                && (start == Tile::EW || start == Tile::NW || start == Tile::SW)
         }
         Direction::East => {
-            (end == &Tile::EW || end == &Tile::NW || end == &Tile::SW)
-                && (start == &Tile::EW || start == &Tile::NE || start == &Tile::SE)
+            (end == Tile::EW || end == Tile::NW || end == Tile::SW)
+                && (start == Tile::EW || start == Tile::NE || start == Tile::SE)
         }
         Direction::North => {
-            (end == &Tile::NS || end == &Tile::SE || end == &Tile::SW)
-                && (start == &Tile::NS || start == &Tile::NE || start == &Tile::NW)
+            (end == Tile::NS || end == Tile::SE || end == Tile::SW)
+                && (start == Tile::NS || start == Tile::NE || start == Tile::NW)
         }
         Direction::South => {
-            (end == &Tile::NS || end == &Tile::NE || end == &Tile::NW)
-                && (start == &Tile::NS || start == &Tile::SE || start == &Tile::SW)
+            (end == Tile::NS || end == Tile::NE || end == Tile::NW)
+                && (start == Tile::NS || start == Tile::SE || start == Tile::SW)
         }
     }
 }
@@ -118,17 +118,21 @@ fn is_connected(start: &Tile, end: &Tile, relationship: Direction) -> bool {
 fn get_surrounding(
     posn: (usize, usize),
     tiles: &[Vec<Tile>],
-) -> (Option<&Tile>, Option<&Tile>, Option<&Tile>, Option<&Tile>) {
+) -> (Option<Tile>, Option<Tile>, Option<Tile>, Option<Tile>) {
     let (r, c) = posn;
     let row = &tiles[r];
-    let west = if c == 0 { None } else { row.get(c - 1) };
-    let east = row.get(c + 1);
+    let west = if c == 0 {
+        None
+    } else {
+        row.get(c - 1).copied()
+    };
+    let east = row.get(c + 1).copied();
     let north = if r == 0 {
         None
     } else {
-        tiles.get(r - 1).map(|row| &row[c])
+        tiles.get(r - 1).map(|row| &row[c]).copied()
     };
-    let south = tiles.get(r + 1).map(|row| &row[c]);
+    let south = tiles.get(r + 1).map(|row| &row[c]).copied();
     (north, south, east, west)
 }
 
@@ -139,22 +143,22 @@ fn where_next(posn: (usize, usize), tiles: &[Vec<Tile>]) -> Vec<Direction> {
     // I'll be connected to exactly two
     let mut connected = vec![];
     if let Some(west) = west {
-        if is_connected(&tiles[r][c], west, Direction::West) {
+        if is_connected(tiles[r][c], west, Direction::West) {
             connected.push(Direction::West);
         }
     }
     if let Some(east) = east {
-        if is_connected(&tiles[r][c], east, Direction::East) {
+        if is_connected(tiles[r][c], east, Direction::East) {
             connected.push(Direction::East);
         }
     }
     if let Some(north) = north {
-        if is_connected(&tiles[r][c], north, Direction::North) {
+        if is_connected(tiles[r][c], north, Direction::North) {
             connected.push(Direction::North);
         }
     }
     if let Some(south) = south {
-        if is_connected(&tiles[r][c], south, Direction::South) {
+        if is_connected(tiles[r][c], south, Direction::South) {
             connected.push(Direction::South);
         }
     }
@@ -242,7 +246,7 @@ impl Day for Day10 {
         let mut tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
             .unwrap()
             .lines()
-            .map(|l| l.chars().map(|c| c.into()).collect())
+            .map(|l| l.chars().map(std::convert::Into::into).collect())
             .collect();
         let ((r, c), t) = find_start(&tiles);
         tiles[r][c] = t;
@@ -253,7 +257,7 @@ impl Day for Day10 {
         let mut tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
             .unwrap()
             .lines()
-            .map(|l| l.chars().map(|c| c.into()).collect())
+            .map(|l| l.chars().map(std::convert::Into::into).collect())
             .collect();
         let ((r, c), t) = find_start(&tiles);
         tiles[r][c] = t;
@@ -286,6 +290,7 @@ where
 }
 
 impl Grid {
+    #[must_use]
     pub fn num_contained(&self) -> usize {
         let mut count = 0;
         for r in 0..self.grid.len() {
@@ -298,6 +303,7 @@ impl Grid {
         count
     }
 
+    #[must_use]
     pub fn is_inside(&self, posn: (usize, usize)) -> bool {
         let (r, c) = posn;
         self.grid[r][c] == Tile::Ground && self.raycast(posn) % 2 == 1
@@ -341,7 +347,7 @@ impl std::fmt::Debug for Grid {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for row in &self.grid {
             for t in row {
-                write!(f, "{}", t)?;
+                write!(f, "{t}")?;
             }
             writeln!(f)?;
         }

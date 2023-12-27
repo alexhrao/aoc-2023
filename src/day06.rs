@@ -32,9 +32,9 @@ impl Day for Day06 {
             .zip(dists)
             .map(|(t, d)| (t.parse().unwrap(), d.parse().unwrap()))
             .collect();
-        println!("{:?}", races);
+        println!("{races:?}");
         let total: usize = races.into_iter().map(num_ways_to_win).product();
-        println!("{}", total);
+        println!("{total}");
     }
     fn task2(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap();

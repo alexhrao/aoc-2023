@@ -55,7 +55,7 @@ impl Schematic {
                         row: r,
                         col: c,
                         c: ch,
-                    })
+                    });
                 }
             }
             if let Some(end) = stop {
@@ -103,7 +103,7 @@ impl Day for Day03 {
             })
             .collect();
         let total: usize = parts.iter().map(|&p| p.num).sum();
-        println!("{:?}", total);
+        println!("{total:?}");
     }
     fn task2(&self, file: &std::path::Path) {
         let s = Schematic::from_rows(
@@ -142,6 +142,6 @@ impl Day for Day03 {
                 // Some(these_parts)
             })
             .sum();
-        println!("{}", total);
+        println!("{total}");
     }
 }

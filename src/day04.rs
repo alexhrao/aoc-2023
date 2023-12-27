@@ -18,7 +18,7 @@ impl Card {
             .count()
     }
     pub fn score(&self) -> usize {
-        let winners = self.num_winning() as u32;
+        let winners = u32::try_from(self.num_winning()).unwrap();
         if winners == 0 {
             0
         } else {
@@ -54,7 +54,7 @@ impl Day for Day04 {
             .map(|l| l.parse().unwrap())
             .collect();
         let total: usize = cards.iter().map(Card::score).sum();
-        println!("{}", total);
+        println!("{total}");
     }
     fn task2(&self, file: &std::path::Path) {
         let cards: Vec<Card> = fs::read_to_string(file)

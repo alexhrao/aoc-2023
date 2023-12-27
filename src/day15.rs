@@ -60,7 +60,7 @@ impl Day for Day15 {
             .split(',')
             .map(digest)
             .sum::<usize>();
-        println!("{}", total);
+        println!("{total}");
     }
     fn task2(&self, file: &std::path::Path) {
         let backing = fs::read_to_string(file).unwrap().replace('\n', "");
@@ -92,6 +92,6 @@ impl Day for Day15 {
             .enumerate()
             .map(|(b, bucket)| total_bucket(bucket, b))
             .sum::<usize>();
-        println!("{:?}", total);
+        println!("{total:?}");
     }
 }

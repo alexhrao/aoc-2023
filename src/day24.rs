@@ -6,8 +6,8 @@ use super::Day;
 
 pub struct Day24;
 
-const MIN: f64 = 200000000000000f64;
-const MAX: f64 = 400000000000000f64;
+const MIN: f64 = 200_000_000_000_000_f64;
+const MAX: f64 = 400_000_000_000_000_f64;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct HailStone {
@@ -85,7 +85,7 @@ impl Day for Day24 {
             })
             .filter(in_range)
             .count();
-        println!("{}", total);
+        println!("{total}");
     }
     fn task2(&self, _file: &std::path::Path) {}
 }

@@ -137,9 +137,7 @@ impl Ord for Hand {
             return std::cmp::Ordering::Equal;
         }
         let cmp = self.get_strength().cmp(&other.get_strength());
-        if cmp != std::cmp::Ordering::Equal {
-            cmp
-        } else {
+        if cmp == std::cmp::Ordering::Equal {
             for (c1, c2) in self.cards.iter().zip(other.cards.iter()) {
                 let cmp = c1.cmp(c2);
                 if cmp != std::cmp::Ordering::Equal {
@@ -147,6 +145,8 @@ impl Ord for Hand {
                 }
             }
             std::cmp::Ordering::Equal
+        } else {
+            cmp
         }
     }
 }
@@ -166,14 +166,12 @@ impl FromStr for Hand {
             cards[i] = c.into();
         }
         let bid = split.next().unwrap().parse().unwrap();
-        Ok(Hand { bid, cards })
+        Ok(Hand { cards, bid })
     }
 }
 
 fn score(cards: &[WildCard]) -> HandStrength {
-    if cards.is_empty() {
-        panic!("Must be given at least one card");
-    }
+    assert!(!cards.is_empty(), "Must be given at least one card");
     if cards.len() == 1 {
         HandStrength::HighCard
     } else if cards.len() == 2 {
@@ -276,17 +274,17 @@ impl WildHand {
                 .cards
                 .iter()
                 .filter_map(|&wc| {
-                    if wc != WildCard::Joker {
-                        Some(wc)
-                    } else {
+                    if wc == WildCard::Joker {
                         None
+                    } else {
+                        Some(wc)
                     }
                 })
                 .collect();
             let strength = score(&normals);
             match strength {
                 HS::FiveKind | HS::FourKind => HS::FiveKind,
-                HS::FullHouse => HS::FullHouse,
+                HS::FullHouse | HS::TwoPair => HS::FullHouse,
                 HS::ThreeKind => {
                     if num_jokers == 1 {
                         HS::FourKind
@@ -294,7 +292,6 @@ impl WildHand {
                         HS::FiveKind
                     }
                 }
-                HS::TwoPair => HS::FullHouse,
                 HS::OnePair => {
                     if num_jokers == 3 {
                         HS::FiveKind
@@ -329,7 +326,7 @@ impl FromStr for WildHand {
             cards[i] = c.into();
         }
         let bid = split.next().unwrap().parse().unwrap();
-        Ok(WildHand { bid, cards })
+        Ok(WildHand { cards, bid })
     }
 }
 
@@ -339,9 +336,7 @@ impl Ord for WildHand {
             return std::cmp::Ordering::Equal;
         }
         let cmp = self.get_strength().cmp(&other.get_strength());
-        if cmp != std::cmp::Ordering::Equal {
-            cmp
-        } else {
+        if cmp == std::cmp::Ordering::Equal {
             for (c1, c2) in self.cards.iter().zip(other.cards.iter()) {
                 let cmp = c1.cmp(c2);
                 if cmp != std::cmp::Ordering::Equal {
@@ -349,6 +344,8 @@ impl Ord for WildHand {
                 }
             }
             std::cmp::Ordering::Equal
+        } else {
+            cmp
         }
     }
 }
@@ -373,7 +370,7 @@ impl Day for Day07 {
             .enumerate()
             .map(|(i, c)| (i + 1) * c.bid)
             .sum::<usize>();
-        println!("{}", total);
+        println!("{total}");
     }
     fn task2(&self, file: &std::path::Path) {
         let mut hands: Vec<WildHand> = fs::read_to_string(file)
@@ -388,6 +385,6 @@ impl Day for Day07 {
             .enumerate()
             .map(|(i, c)| (i + 1) * c.bid)
             .sum::<usize>();
-        println!("{}", total);
+        println!("{total}");
     }
 }

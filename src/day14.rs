@@ -46,7 +46,7 @@ impl FromStr for Grid {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let grid = s
             .lines()
-            .map(|r| r.chars().map(|c| c.into()).collect())
+            .map(|r| r.chars().map(std::convert::Into::into).collect())
             .collect();
         Ok(Grid { grid })
     }
@@ -76,10 +76,10 @@ impl Grid {
                     // It could roll. Find the first entry above me that
                     // isn't occupied
                     let idx = col.iter().take(r).enumerate().rev().find_map(|(i, s)| {
-                        if s != &Space::Empty {
-                            Some(i)
-                        } else {
+                        if s == &Space::Empty {
                             None
+                        } else {
+                            Some(i)
                         }
                     });
                     // Clear mine, but then replace with idx
@@ -128,9 +128,9 @@ impl Display for Grid {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for row in &self.grid {
             for col in row {
-                write!(f, "{}", col)?
+                write!(f, "{col}")?;
             }
-            writeln!(f)?
+            writeln!(f)?;
         }
         Ok(())
     }
@@ -146,10 +146,10 @@ impl Day for Day14 {
         let mut grid: Grid = fs::read_to_string(file).unwrap().parse().unwrap();
         let mut past = HashMap::new();
 
-        for i in 0..1000000000 {
+        for i in 0..1_000_000_000 {
             if let Some(idx) = past.get(&grid) {
                 let modulus = i - *idx;
-                let oper = 1000000000 - *idx;
+                let oper = 1_000_000_000 - *idx;
                 for _ in 0..(oper % modulus) {
                     grid.cycle();
                 }

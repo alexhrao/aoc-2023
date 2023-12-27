@@ -215,6 +215,6 @@ impl Day for Day20 {
         }
         // Maybe I'll get lucky and it's not the least common multiple
         let total = seen.values().product::<usize>();
-        println!("{}", total);
+        println!("{total}");
     }
 }
