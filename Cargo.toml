@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1.0.76", features = ["backtrace"] }
+aoc-runner = "0.3.0"
+aoc-runner-derive = "0.3.0"
 clap = { version = "4.4.10", features = ["derive", "wrap_help"] }
 gcd = "2.3.0"
 itertools = "0.12.0"
@@ -19,8 +21,3 @@ rustworkx-core = "0.13.2"
 codegen-units = 1
 lto = "fat"
 opt-level = 3
-
-[lints.clippy]
-pedantic = "deny"
-cast_sign_loss = "allow"
-cast_possible_wrap = "allow"

@@ -4,14 +4,15 @@ This is my repository for AoC 2023. I'm in the process of learning Rust, so I'm 
 
 The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repository](https://github.com/savbell/advent-of-code-one-liners/tree/master).
 
-
 ## Progress Tracking
+
 | Status | Description |
 | ------ | ----------- |
 | ❌     | Problem not attempted yet |
 | ✅     | Completed |
 
 ## 2023 Solutions
+
 | Day              | Part 1 | Part 2 | Commentary |
 |------------------|--------|--------|------------|
 | [01](src/day01.rs) | ✅ | ✅ |  |

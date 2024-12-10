@@ -1,8 +1,6 @@
-use std::{collections::HashMap, fs};
+use std::collections::HashMap;
 
-use super::Day;
-
-pub struct Day10;
+use aoc_runner_derive::{aoc, aoc_generator};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Tile {
@@ -241,31 +239,31 @@ fn find_start(tiles: &[Vec<Tile>]) -> ((usize, usize), Tile) {
     unreachable!()
 }
 
-impl Day for Day10 {
-    fn task1(&self, file: &std::path::Path) {
-        let mut tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.chars().map(std::convert::Into::into).collect())
-            .collect();
-        let ((r, c), t) = find_start(&tiles);
-        tiles[r][c] = t;
-        let counts = traverse((r, c), &tiles);
-        println!("{}", counts.values().max().unwrap());
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let mut tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.chars().map(std::convert::Into::into).collect())
-            .collect();
-        let ((r, c), t) = find_start(&tiles);
-        tiles[r][c] = t;
-        let counts = traverse((r, c), &tiles);
-        let path: Vec<_> = counts.keys().map(|&(r, c)| ((r, c), tiles[r][c])).collect();
-        let grid = Grid::from(path);
-        println!("{}", grid.num_contained());
-    }
+#[aoc_generator(day10)]
+pub fn gen(input: &str) -> Vec<Vec<Tile>> {
+    input
+        .lines()
+        .map(|l| l.chars().map(std::convert::Into::into).collect())
+        .collect()
+}
+
+#[aoc(day10, part1)]
+pub fn part1(tiles: &[Vec<Tile>]) -> usize {
+    let ((r, c), t) = find_start(tiles);
+    let mut tiles = tiles.to_owned();
+    tiles[r][c] = t;
+    *traverse((r, c), &tiles).values().max().unwrap()
+}
+
+#[aoc(day10, part2)]
+pub fn part2(tiles: &[Vec<Tile>]) -> usize {
+    let ((r, c), t) = find_start(tiles);
+    let mut tiles = tiles.to_owned();
+    tiles[r][c] = t;
+    let counts = traverse((r, c), &tiles);
+    let path: Vec<_> = counts.keys().map(|&(r, c)| ((r, c), tiles[r][c])).collect();
+    let grid = Grid::from(path);
+    grid.num_contained()
 }
 
 #[derive(Clone)]

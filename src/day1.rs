@@ -1,7 +1,4 @@
-use super::Day;
-use std::fs;
-
-pub struct Day01;
+use aoc_runner_derive::aoc;
 
 const NUMS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3", "4",
@@ -53,21 +50,11 @@ fn get_digits_hard(line: &str) -> usize {
     (first * 10) + second
 }
 
-impl Day for Day01 {
-    fn task1(&self, file: &std::path::Path) {
-        let sum: usize = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(get_digits)
-            .sum();
-        println!("{sum}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let sum: usize = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(get_digits_hard)
-            .sum();
-        println!("{sum}");
-    }
+#[aoc(day1, part1)]
+pub fn part1(input: &str) -> usize {
+    input.lines().map(get_digits).sum()
+}
+#[aoc(day1, part2)]
+pub fn part2(input: &str) -> usize {
+    input.lines().map(get_digits_hard).sum()
 }

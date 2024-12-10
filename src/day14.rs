@@ -1,8 +1,5 @@
-use std::{collections::HashMap, fmt::Display, fs, str::FromStr};
-
-use super::Day;
-
-pub struct Day14;
+use aoc_runner_derive::aoc;
+use std::{collections::HashMap, fmt::Display, str::FromStr};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Space {
@@ -136,28 +133,29 @@ impl Display for Grid {
     }
 }
 
-impl Day for Day14 {
-    fn task1(&self, file: &std::path::Path) {
-        let mut grid: Grid = fs::read_to_string(file).unwrap().parse().unwrap();
-        grid.tilt_north();
-        println!("{}", grid.north_load());
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let mut grid: Grid = fs::read_to_string(file).unwrap().parse().unwrap();
-        let mut past = HashMap::new();
+#[aoc(day14, part1)]
+pub fn part1(input: &str) -> usize {
+    let mut grid: Grid = input.parse().unwrap();
+    grid.tilt_north();
+    grid.north_load()
+}
 
-        for i in 0..1_000_000_000 {
-            if let Some(idx) = past.get(&grid) {
-                let modulus = i - *idx;
-                let oper = 1_000_000_000 - *idx;
-                for _ in 0..(oper % modulus) {
-                    grid.cycle();
-                }
-                break;
+#[aoc(day14, part2)]
+pub fn part2(input: &str) -> usize {
+    let mut grid: Grid = input.parse().unwrap();
+    let mut past = HashMap::new();
+
+    for i in 0..1_000_000_000 {
+        if let Some(idx) = past.get(&grid) {
+            let modulus = i - *idx;
+            let oper = 1_000_000_000 - *idx;
+            for _ in 0..(oper % modulus) {
+                grid.cycle();
             }
-            past.insert(grid.clone(), i);
-            grid.cycle();
+            break;
         }
-        println!("{}", grid.north_load());
+        past.insert(grid.clone(), i);
+        grid.cycle();
     }
+    grid.north_load()
 }

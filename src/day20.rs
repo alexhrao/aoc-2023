@@ -1,14 +1,11 @@
-use std::{collections::HashMap, fs};
+use aoc_runner_derive::aoc;
+use std::collections::HashMap;
 
 use regex::Regex;
-
-use super::Day;
 
 const SOURCE: &str = "button";
 const BROADCASTER: &str = "broadcaster";
 const OUTPUT: &str = "rx";
-
-pub struct Day20;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Signal {
@@ -178,43 +175,41 @@ fn button_press<'a>(mods: &mut HashMap<&str, Module<'a>>) -> ((usize, usize), Ve
     ((lows, highs), seen)
 }
 
-impl Day for Day20 {
-    fn task1(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap();
-        let mut mods = parse_modules(&backing);
+#[aoc(day20, part1)]
+pub fn part1(input: &str) -> usize {
+    let mut mods = parse_modules(input);
 
-        let mut lows = 0;
-        let mut highs = 0;
-        for _ in 0..1000 {
-            let ((l, h), _) = button_press(&mut mods);
-            lows += l;
-            highs += h;
-        }
-        println!("{}", lows * highs);
+    let mut lows = 0;
+    let mut highs = 0;
+    for _ in 0..1000 {
+        let ((l, h), _) = button_press(&mut mods);
+        lows += l;
+        highs += h;
     }
-    fn task2(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap();
-        let mut mods = parse_modules(&backing);
+    lows * highs
+}
 
-        let mut seen = HashMap::new();
-        let check = mods
-            .values()
-            .find(|m| m.outputs.contains(&OUTPUT))
-            .unwrap()
-            .inputs
-            .len();
-        // Clocks start at 1 in our world
-        for c in 1usize.. {
-            let (_, s) = button_press(&mut mods);
-            for s in s {
-                seen.entry(s).or_insert(c);
-            }
-            if seen.len() == check {
-                break;
-            }
+#[aoc(day20, part2)]
+pub fn part2(input: &str) -> usize {
+    let mut mods = parse_modules(input);
+
+    let mut seen = HashMap::new();
+    let check = mods
+        .values()
+        .find(|m| m.outputs.contains(&OUTPUT))
+        .unwrap()
+        .inputs
+        .len();
+    // Clocks start at 1 in our world
+    for c in 1usize.. {
+        let (_, s) = button_press(&mut mods);
+        for s in s {
+            seen.entry(s).or_insert(c);
         }
-        // Maybe I'll get lucky and it's not the least common multiple
-        let total = seen.values().product::<usize>();
-        println!("{total}");
+        if seen.len() == check {
+            break;
+        }
     }
+    // Maybe I'll get lucky and it's not the least common multiple
+    seen.values().product()
 }

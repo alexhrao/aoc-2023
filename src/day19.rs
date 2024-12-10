@@ -1,9 +1,6 @@
-use std::{collections::HashMap, fmt::Display, fs, str::FromStr};
-
-use super::Day;
+use aoc_runner_derive::aoc;
 use regex::Regex;
-
-pub struct Day19;
+use std::{collections::HashMap, fmt::Display, str::FromStr};
 
 const MIN: usize = 1;
 const MAX: usize = 4000;
@@ -73,7 +70,7 @@ impl<'a> From<&'a str> for Rule<'a> {
     }
 }
 
-impl<'a> Rule<'a> {
+impl Rule<'_> {
     pub fn check_part(&self, part: &Part) -> Option<&str> {
         let val = part[self.field];
         let result = match self.op {
@@ -97,7 +94,7 @@ struct Workflow<'a> {
 
 impl<'a> From<&'a str> for Workflow<'a> {
     fn from(value: &'a str) -> Self {
-        let mut split = value.split(|c| c == '{' || c == '}');
+        let mut split = value.split(['{', '}']);
         let name = split.next().unwrap();
         let mut rules: Vec<&str> = split.next().unwrap().split(',').collect();
         let fallback = rules.pop().unwrap();
@@ -110,7 +107,7 @@ impl<'a> From<&'a str> for Workflow<'a> {
     }
 }
 
-impl<'a> Workflow<'a> {
+impl Workflow<'_> {
     pub fn process_part(&self, part: &Part) -> &str {
         for rule in &self.rules {
             if let Some(dst) = rule.check_part(part) {
@@ -187,7 +184,7 @@ enum Status<'a> {
     Fail(Rule<'a>),
 }
 
-impl<'a> Status<'a> {
+impl Status<'_> {
     pub fn range(&self) -> (Metric, (usize, usize)) {
         match self {
             Status::Pass(rule) => {
@@ -343,51 +340,45 @@ fn find_paths<'a>(flows: &HashMap<&str, Workflow<'a>>) -> Vec<Vec<Status<'a>>> {
     paths
 }
 
-impl Day for Day19 {
-    fn task1(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap();
-        let mut lines = backing.lines();
+#[aoc(day19, part1)]
+pub fn part1(input: &str) -> usize {
+    let mut lines = input.lines();
 
-        let flows: HashMap<&str, Workflow<'_>> = lines
-            .by_ref()
-            .take_while(|l| !l.is_empty())
-            .map(|wf| {
-                let wf: Workflow = wf.into();
-                (wf.name, wf)
-            })
-            .collect();
-        let parts: Vec<Part> = lines
-            .take_while(|l| !l.is_empty())
-            .map(|wf| wf.parse().unwrap())
-            .collect();
-        let total: usize = parts
-            .iter()
-            .filter_map(|p| {
-                if p.check(&flows) {
-                    Some(p.score())
-                } else {
-                    None
-                }
-            })
-            .sum();
-        println!("{total}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap();
-        let flows: HashMap<&str, Workflow<'_>> = backing
-            .lines()
-            .take_while(|l| !l.is_empty())
-            .map(|wf| {
-                let wf: Workflow = wf.into();
-                (wf.name, wf)
-            })
-            .collect();
+    let flows: HashMap<&str, Workflow<'_>> = lines
+        .by_ref()
+        .take_while(|l| !l.is_empty())
+        .map(|wf| {
+            let wf: Workflow = wf.into();
+            (wf.name, wf)
+        })
+        .collect();
+    lines
+        .take_while(|l| !l.is_empty())
+        .filter_map(|wf| {
+            let p: Part = wf.parse().unwrap();
+            if p.check(&flows) {
+                Some(p.score())
+            } else {
+                None
+            }
+        })
+        .sum()
+}
 
-        let total = find_paths(&flows)
-            .iter()
-            .map(PartRange::from)
-            .map(|pr| pr.num_possibilities())
-            .sum::<usize>();
-        println!("{total}");
-    }
+#[aoc(day19, part2)]
+pub fn part2(input: &str) -> usize {
+    let flows: HashMap<&str, Workflow<'_>> = input
+        .lines()
+        .take_while(|l| !l.is_empty())
+        .map(|wf| {
+            let wf: Workflow = wf.into();
+            (wf.name, wf)
+        })
+        .collect();
+
+    find_paths(&flows)
+        .iter()
+        .map(PartRange::from)
+        .map(|pr| pr.num_possibilities())
+        .sum()
 }

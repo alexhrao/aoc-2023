@@ -1,7 +1,6 @@
-use std::{collections::HashMap, fs, str::FromStr};
+use aoc_runner_derive::{aoc, aoc_generator};
 
-use super::Day;
-pub struct Day07;
+use std::{collections::HashMap, str::FromStr};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Card {
@@ -41,7 +40,7 @@ impl From<char> for Card {
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct Hand {
+pub struct Hand {
     cards: [Card; 5],
     bid: usize,
 }
@@ -84,7 +83,7 @@ impl From<char> for WildCard {
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct WildHand {
+pub struct WildHand {
     cards: [WildCard; 5],
     bid: usize,
 }
@@ -101,7 +100,7 @@ enum HandStrength {
 }
 
 impl Hand {
-    pub fn get_strength(&self) -> HandStrength {
+    fn get_strength(&self) -> HandStrength {
         let mut cards = self.cards;
         cards.sort();
         // Naive?
@@ -228,7 +227,7 @@ fn score(cards: &[WildCard]) -> HandStrength {
 }
 
 impl WildHand {
-    pub fn get_strength(&self) -> HandStrength {
+    fn get_strength(&self) -> HandStrength {
         let mut cards = self.cards;
         cards.sort();
         // Naive?
@@ -356,35 +355,28 @@ impl PartialOrd for WildHand {
     }
 }
 
-impl Day for Day07 {
-    fn task1(&self, file: &std::path::Path) {
-        let mut hands: Vec<Hand> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        hands.sort();
+#[aoc_generator(day7, part1)]
+pub fn gen_part1(input: &str) -> Vec<Hand> {
+    let mut hands: Vec<_> = input.lines().map(|l| l.parse().unwrap()).collect();
+    hands.sort_unstable();
 
-        let total = hands
-            .iter()
-            .enumerate()
-            .map(|(i, c)| (i + 1) * c.bid)
-            .sum::<usize>();
-        println!("{total}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let mut hands: Vec<WildHand> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        hands.sort();
+    hands
+}
 
-        let total = hands
-            .iter()
-            .enumerate()
-            .map(|(i, c)| (i + 1) * c.bid)
-            .sum::<usize>();
-        println!("{total}");
-    }
+#[aoc_generator(day7, part2)]
+pub fn gen_part2(input: &str) -> Vec<WildHand> {
+    let mut hands: Vec<_> = input.lines().map(|l| l.parse().unwrap()).collect();
+    hands.sort_unstable();
+
+    hands
+}
+
+#[aoc(day7, part1)]
+pub fn part1(hands: &[Hand]) -> usize {
+    hands.iter().enumerate().map(|(i, c)| (i + 1) * c.bid).sum()
+}
+
+#[aoc(day7, part2)]
+pub fn part2(hands: &[WildHand]) -> usize {
+    hands.iter().enumerate().map(|(i, c)| (i + 1) * c.bid).sum()
 }

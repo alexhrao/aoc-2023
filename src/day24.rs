@@ -1,16 +1,13 @@
-use std::{fs, str::FromStr};
+use aoc_runner_derive::{aoc, aoc_generator};
+use std::str::FromStr;
 
 use regex::Regex;
-
-use super::Day;
-
-pub struct Day24;
 
 const MIN: f64 = 200_000_000_000_000_f64;
 const MAX: f64 = 400_000_000_000_000_f64;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct HailStone {
+pub struct HailStone {
     posn: (f64, f64, f64),
     velocity: (f64, f64, f64),
 }
@@ -62,30 +59,26 @@ fn in_range(xy: &(f64, f64)) -> bool {
     rng.contains(&x) && rng.contains(&y)
 }
 
-impl Day for Day24 {
-    fn task1(&self, file: &std::path::Path) {
-        let stones: Vec<HailStone> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .inspect(|s: &HailStone| println!("y = {}x + {}", s.m(), s.b()))
-            .collect();
-        let total = stones
-            .iter()
-            .enumerate()
-            .flat_map(|(s1, stone1)| {
-                stones.iter().skip(s1 + 1).filter_map(|stone2| {
-                    let x = stone1.intersect(stone2);
-                    if stone1.in_future(&x) && stone2.in_future(&x) {
-                        Some(x)
-                    } else {
-                        None
-                    }
-                })
+#[aoc_generator(day24)]
+pub fn gen(input: &str) -> Vec<HailStone> {
+    input.lines().map(|l| l.parse().unwrap()).collect()
+}
+
+#[aoc(day24, part1)]
+pub fn part1(stones: &[HailStone]) -> usize {
+    stones
+        .iter()
+        .enumerate()
+        .flat_map(|(s1, stone1)| {
+            stones.iter().skip(s1 + 1).filter_map(|stone2| {
+                let x = stone1.intersect(stone2);
+                if stone1.in_future(&x) && stone2.in_future(&x) {
+                    Some(x)
+                } else {
+                    None
+                }
             })
-            .filter(in_range)
-            .count();
-        println!("{total}");
-    }
-    fn task2(&self, _file: &std::path::Path) {}
+        })
+        .filter(in_range)
+        .count()
 }

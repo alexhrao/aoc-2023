@@ -1,13 +1,10 @@
-use std::{collections::HashMap, fmt::Display, fs, str::FromStr};
-
-use super::Day;
+use aoc_runner_derive::{aoc, aoc_generator};
+use std::{collections::HashMap, fmt::Display, str::FromStr};
 
 use rayon::{
     iter::{IntoParallelRefIterator, ParallelIterator},
     str,
 };
-
-pub struct Day12;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Spring {
@@ -42,7 +39,7 @@ impl Display for Spring {
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
-struct Record {
+pub struct Record {
     springs: Vec<Spring>,
     groups: Vec<usize>,
 }
@@ -175,35 +172,29 @@ impl Display for Record {
     }
 }
 
-impl Day for Day12 {
-    fn task1(&self, file: &std::path::Path) {
-        let records: Vec<Record> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        let result = records.iter().map(Record::possibilities).sum::<usize>();
-        println!("{result}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let records: Vec<Record> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .map(|mut r: Record| {
-                let springs = r.springs.clone();
-                for _ in 0..4 {
-                    r.springs.push(Spring::Unknown);
-                    r.springs.extend(&springs);
-                }
-                r.groups = r.groups.repeat(5);
-                r
-            })
-            .collect();
-        let result = records
-            .par_iter()
-            .map(|r| r.memoized_possibilities(&mut HashMap::new()))
-            .sum::<usize>();
-        println!("{result}");
-    }
+#[aoc_generator(day12)]
+pub fn gen(input: &str) -> Vec<Record> {
+    input.lines().map(|l| l.parse().unwrap()).collect()
+}
+
+#[aoc(day12, part1)]
+pub fn part1(records: &[Record]) -> usize {
+    records.iter().map(Record::possibilities).sum()
+}
+
+#[aoc(day12, part2)]
+pub fn part2(records: &[Record]) -> usize {
+    records
+        .par_iter()
+        .cloned()
+        .map(|mut r: Record| {
+            let springs = r.springs.clone();
+            for _ in 0..4 {
+                r.springs.push(Spring::Unknown);
+                r.springs.extend(&springs);
+            }
+            r.groups = r.groups.repeat(5);
+            r.memoized_possibilities(&mut HashMap::new())
+        })
+        .sum()
 }

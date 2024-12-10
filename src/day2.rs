@@ -1,13 +1,14 @@
-use super::Day;
-use std::{fs, ops::AddAssign, str::FromStr};
+use std::{ops::AddAssign, str::FromStr};
 
-pub struct Day02;
+use aoc_runner_derive::{aoc, aoc_generator};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Cube {
     Blue(usize),
     Red(usize),
     Green(usize),
 }
+
 impl FromStr for Cube {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -136,7 +137,7 @@ impl FromStr for Set {
     }
 }
 #[derive(Debug, Clone)]
-struct Game {
+pub struct Game {
     id: usize,
     sets: Vec<Set>,
 }
@@ -156,65 +157,60 @@ impl FromStr for Game {
     }
 }
 
-impl Day for Day02 {
-    fn task1(&self, file: &std::path::Path) {
-        let games: Vec<Game> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        let limits = SetSummary {
-            red: Cube::Red(12),
-            green: Cube::Green(13),
-            blue: Cube::Blue(14),
-        };
+#[aoc_generator(day2)]
+pub fn gen(input: &str) -> Vec<Game> {
+    input.lines().map(|l| l.parse().unwrap()).collect()
+}
 
-        let mut all = 0;
-        for game in &games {
-            all += game.id;
-            for set in &game.sets {
-                let summary: SetSummary = set.into();
-                if summary.red > limits.red
-                    || summary.green > limits.green
-                    || summary.blue > limits.blue
-                {
-                    all -= game.id;
-                    break;
-                }
+#[aoc(day2, part1)]
+pub fn part1(games: &[Game]) -> usize {
+    let limits = SetSummary {
+        red: Cube::Red(12),
+        green: Cube::Green(13),
+        blue: Cube::Blue(14),
+    };
+
+    let mut all = 0;
+    for game in games {
+        all += game.id;
+        for set in &game.sets {
+            let summary: SetSummary = set.into();
+            if summary.red > limits.red
+                || summary.green > limits.green
+                || summary.blue > limits.blue
+            {
+                all -= game.id;
+                break;
             }
         }
-        println!("{all}");
     }
-    fn task2(&self, file: &std::path::Path) {
-        let games: Vec<Game> = fs::read_to_string(file)
+    all
+}
+
+#[aoc(day2, part2)]
+pub fn part2(games: &[Game]) -> usize {
+    let mut sum = 0;
+    for game in games {
+        let summaries: Vec<SetSummary> = game.sets.iter().map(std::convert::Into::into).collect();
+        let mut m: SetSummary = summaries
+            .iter()
+            .max_by_key(|&ss| ss.red)
             .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        let mut sum = 0;
-        for game in &games {
-            let summaries: Vec<SetSummary> =
-                game.sets.iter().map(std::convert::Into::into).collect();
-            let mut m: SetSummary = summaries
-                .iter()
-                .max_by_key(|&ss| ss.red)
-                .unwrap()
-                .red
-                .into();
-            m += summaries
-                .iter()
-                .max_by_key(|&ss| ss.green)
-                .unwrap()
-                .green
-                .into();
-            m += summaries
-                .iter()
-                .max_by_key(|&ss| ss.blue)
-                .unwrap()
-                .blue
-                .into();
-            sum += m.mult();
-        }
-        println!("{sum}");
+            .red
+            .into();
+        m += summaries
+            .iter()
+            .max_by_key(|&ss| ss.green)
+            .unwrap()
+            .green
+            .into();
+        m += summaries
+            .iter()
+            .max_by_key(|&ss| ss.blue)
+            .unwrap()
+            .blue
+            .into();
+        sum += m.mult();
     }
+    sum
 }

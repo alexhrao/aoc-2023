@@ -1,12 +1,9 @@
-use std::{collections::HashMap, fs, str::FromStr};
-
-use super::Day;
+use aoc_runner_derive::aoc;
+use std::{collections::HashMap, str::FromStr};
 
 use petgraph::algo::all_simple_paths;
 use petgraph::prelude::*;
 use petgraph::visit::IntoNodeReferences;
-
-pub struct Day23;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Direction {
@@ -247,35 +244,34 @@ impl Map {
     }
 }
 
-impl Day for Day23 {
-    fn task1(&self, file: &std::path::Path) {
-        let map: Map = fs::read_to_string(file).unwrap().parse().unwrap();
-        let path = vec![(0, 1)];
-        let paths = map.naive_explore(&path);
-        let m = paths.iter().map(Vec::len).max().unwrap();
-        println!("{}", m - 1);
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let mut map: Map = fs::read_to_string(file).unwrap().parse().unwrap();
-        map.remove_slopes();
-        let graph = map.graph_setup();
-        let si = graph
-            .node_references()
-            .find_map(|(ni, (r, _))| if *r == 0 { Some(ni) } else { None })
-            .unwrap();
-        let di = graph
-            .node_references()
-            .find_map(|(ni, (r, _))| {
-                if *r == (map.map.len() - 1) {
-                    Some(ni)
-                } else {
-                    None
-                }
-            })
-            .unwrap();
-        let ways: Vec<_> = all_simple_paths::<Vec<_>, _>(&graph, si, di, 0, None).collect();
-        // That took 12 minutes in release mode...
-        let m = ways.iter().map(Vec::len).max().unwrap();
-        println!("{}", m - 1);
-    }
+#[aoc(day23, part1)]
+pub fn part1(input: &str) -> usize {
+    let map: Map = input.parse().unwrap();
+    let path = vec![(0, 1)];
+    let paths = map.naive_explore(&path);
+    paths.iter().map(Vec::len).max().unwrap() - 1
+}
+
+#[aoc(day23, part2)]
+pub fn part2(input: &str) -> usize {
+    let mut map: Map = input.parse().unwrap();
+    map.remove_slopes();
+    let graph = map.graph_setup();
+    let si = graph
+        .node_references()
+        .find_map(|(ni, (r, _))| if *r == 0 { Some(ni) } else { None })
+        .unwrap();
+    let di = graph
+        .node_references()
+        .find_map(|(ni, (r, _))| {
+            if *r == (map.map.len() - 1) {
+                Some(ni)
+            } else {
+                None
+            }
+        })
+        .unwrap();
+    let ways: Vec<_> = all_simple_paths::<Vec<_>, _>(&graph, si, di, 0, None).collect();
+    // That took 12 minutes in release mode...
+    ways.iter().map(Vec::len).max().unwrap() - 1
 }

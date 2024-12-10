@@ -1,8 +1,5 @@
-use std::{fs, str::FromStr};
-
-use super::Day;
-
-pub struct Day15;
+use aoc_runner_derive::aoc;
+use std::str::FromStr;
 
 fn digest(s: &str) -> usize {
     let mut working = 0;
@@ -52,46 +49,42 @@ fn total_bucket(bucket: &[(String, usize)], b: usize) -> usize {
         .sum::<usize>()
 }
 
-impl Day for Day15 {
-    fn task1(&self, file: &std::path::Path) {
-        let total = fs::read_to_string(file)
-            .unwrap()
-            .replace('\n', "")
-            .split(',')
-            .map(digest)
-            .sum::<usize>();
-        println!("{total}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap().replace('\n', "");
-        let steps: Vec<Instruction> = backing.split(',').map(|s| s.parse().unwrap()).collect();
-        // println!("{:?}", steps);
+#[aoc(day15, part1)]
+pub fn part1(input: &str) -> usize {
+    input.replace('\n', "").split(',').map(digest).sum()
+}
 
-        let mut map = vec![vec![]; 256];
-        for s in steps {
-            let bucket = &mut map[digest(&s.id)];
-            let idx = bucket.iter().position(|i: &(String, usize)| i.0 == s.id);
+#[aoc(day15, part2)]
+pub fn part2(input: &str) -> usize {
+    let steps: Vec<Instruction> = input
+        .replace('\n', "")
+        .split(',')
+        .map(|s| s.parse().unwrap())
+        .collect();
+    // println!("{:?}", steps);
 
-            match s.op {
-                Operation::Remove => {
-                    if let Some(idx) = idx {
-                        bucket.remove(idx);
-                    }
+    let mut map = vec![vec![]; 256];
+    for s in steps {
+        let bucket = &mut map[digest(&s.id)];
+        let idx = bucket.iter().position(|i: &(String, usize)| i.0 == s.id);
+
+        match s.op {
+            Operation::Remove => {
+                if let Some(idx) = idx {
+                    bucket.remove(idx);
                 }
-                Operation::Set(len) => {
-                    if let Some(idx) = idx {
-                        bucket[idx] = (s.id, len);
-                    } else {
-                        bucket.push((s.id, len));
-                    }
+            }
+            Operation::Set(len) => {
+                if let Some(idx) = idx {
+                    bucket[idx] = (s.id, len);
+                } else {
+                    bucket.push((s.id, len));
                 }
-            };
-        }
-        let total = map
-            .iter()
-            .enumerate()
-            .map(|(b, bucket)| total_bucket(bucket, b))
-            .sum::<usize>();
-        println!("{total:?}");
+            }
+        };
     }
+    map.iter()
+        .enumerate()
+        .map(|(b, bucket)| total_bucket(bucket, b))
+        .sum()
 }

@@ -1,8 +1,6 @@
-use std::{collections::HashSet, fmt::Debug, fs, str::FromStr};
-
-use super::Day;
+use aoc_runner_derive::aoc;
 use regex::Regex;
-pub struct Day22;
+use std::{collections::HashSet, fmt::Debug, str::FromStr};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct Brick {
@@ -89,12 +87,7 @@ impl<'a> Tree<'a, Brick> {
                 for k in killed {
                     // Clone so that way there's no WAY that we accidentally trample ourselves
                     for supported in tree[k].supporting.clone() {
-                        tree[supported].supporters = tree[supported]
-                            .supporters
-                            .iter()
-                            .filter(|&&i| i != k)
-                            .copied()
-                            .collect();
+                        tree[supported].supporters.retain(|&i| i != k);
                     }
                     checked.insert(k);
                 }
@@ -133,7 +126,7 @@ impl<'a, T> std::ops::Deref for Tree<'a, T> {
     }
 }
 
-impl<'a, T> std::ops::DerefMut for Tree<'a, T> {
+impl<T> std::ops::DerefMut for Tree<'_, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.nodes
     }
@@ -225,41 +218,25 @@ impl<'a> From<&'a mut Vec<Brick>> for Tree<'a, Brick> {
     }
 }
 
-// fn settle(bricks: &mut Vec<Brick>) -> Vec<Node<'_, Brick>> {
-//     // sort by their z-index
+#[aoc(day22, part1)]
+pub fn part1(input: &str) -> usize {
+    let mut bricks: Vec<Brick> = std::iter::once(Brick::plane(0))
+        .chain(input.lines().map(|l| l.parse().unwrap()))
+        .collect();
+    let tree = Tree::from(&mut bricks);
+    tree.iter()
+        .skip(1)
+        .filter(|n| n.is_redundant(&tree))
+        .count()
+}
 
-// }
-
-impl Day for Day22 {
-    fn task1(&self, file: &std::path::Path) {
-        let mut bricks: Vec<Brick> = std::iter::once(Brick::plane(0))
-            .chain(
-                fs::read_to_string(file)
-                    .unwrap()
-                    .lines()
-                    .map(|l| l.parse().unwrap()),
-            )
-            .collect();
-        let tree = Tree::from(&mut bricks);
-        let disintegrated = tree
-            .iter()
-            .skip(1)
-            .filter(|n| n.is_redundant(&tree))
-            .count();
-        println!("{disintegrated}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let mut bricks: Vec<Brick> = std::iter::once(Brick::plane(0))
-            .chain(
-                fs::read_to_string(file)
-                    .unwrap()
-                    .lines()
-                    .map(|l| l.parse().unwrap()),
-            )
-            .collect();
-        let tree = Tree::from(&mut bricks);
-        println!("{}", tree.supported());
-    }
+#[aoc(day22, part2)]
+pub fn part2(input: &str) -> usize {
+    let mut bricks: Vec<Brick> = std::iter::once(Brick::plane(0))
+        .chain(input.lines().map(|l| l.parse().unwrap()))
+        .collect();
+    let tree = Tree::from(&mut bricks);
+    tree.supported()
 }
 
 #[cfg(test)]

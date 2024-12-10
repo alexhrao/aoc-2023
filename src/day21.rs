@@ -1,8 +1,5 @@
-use std::{collections::HashSet, fmt::Display, fs, str::FromStr};
-
-use super::Day;
-
-pub struct Day21;
+use aoc_runner_derive::aoc;
+use std::{collections::HashSet, fmt::Display, str::FromStr};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct Garden {
@@ -117,18 +114,20 @@ impl FromStr for Garden {
     }
 }
 
-impl Day for Day21 {
-    fn task1(&self, file: &std::path::Path) {
-        let mut garden: Garden = fs::read_to_string(file).unwrap().parse().unwrap();
-        for _ in 0..26_501_365 {
-            garden.step();
-        }
-        println!("{}", garden.current.len());
+#[aoc(day21, part1)]
+pub fn part1(input: &str) -> usize {
+    let mut garden: Garden = input.parse().unwrap();
+    for _ in 0..26_501_365 {
+        garden.step();
     }
-    fn task2(&self, file: &std::path::Path) {
-        let mut garden: Garden = fs::read_to_string(file).unwrap().parse().unwrap();
-        for _ in 0..26_501_365 {
-            garden.step();
-        }
+    garden.current.len()
+}
+
+#[aoc(day21, part2)]
+pub fn part2(input: &str) -> usize {
+    let mut garden: Garden = input.parse().unwrap();
+    for _ in 0..26_501_365 {
+        garden.step();
     }
+    garden.current.len()
 }

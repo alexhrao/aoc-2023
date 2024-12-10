@@ -1,11 +1,8 @@
-use std::{fs, str::FromStr};
-
-use super::Day;
-
-pub struct Day04;
+use aoc_runner_derive::{aoc, aoc_generator};
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
-struct Card {
+pub struct Card {
     winners: Vec<usize>,
     numbers: Vec<usize>,
 }
@@ -46,31 +43,26 @@ impl FromStr for Card {
     }
 }
 
-impl Day for Day04 {
-    fn task1(&self, file: &std::path::Path) {
-        let cards: Vec<Card> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        let total: usize = cards.iter().map(Card::score).sum();
-        println!("{total}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let cards: Vec<Card> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        let mut copies = vec![1; cards.len()];
-        for (c, card) in cards.iter().enumerate() {
-            let matches = card.num_winning();
-            for _ in 0..copies[c] {
-                for c in copies.iter_mut().take(c + matches + 1).skip(c + 1) {
-                    *c += 1;
-                }
+#[aoc_generator(day4)]
+pub fn gen(input: &str) -> Vec<Card> {
+    input.lines().map(|l| l.parse().unwrap()).collect()
+}
+
+#[aoc(day4, part1)]
+pub fn part1(cards: &[Card]) -> usize {
+    cards.iter().map(Card::score).sum()
+}
+
+#[aoc(day4, part2)]
+pub fn part2(cards: &[Card]) -> usize {
+    let mut copies = vec![1; cards.len()];
+    for (c, card) in cards.iter().enumerate() {
+        let matches = card.num_winning();
+        for _ in 0..copies[c] {
+            for c in copies.iter_mut().take(c + matches + 1).skip(c + 1) {
+                *c += 1;
             }
         }
-        println!("{:?}", copies.iter().sum::<usize>());
     }
+    copies.iter().sum()
 }

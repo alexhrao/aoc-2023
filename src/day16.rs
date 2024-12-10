@@ -1,10 +1,9 @@
-use super::Day;
+use aoc_runner_derive::{aoc, aoc_generator};
 use rayon::prelude::*;
-use std::{collections::HashSet, fs};
+use std::collections::HashSet;
 
-pub struct Day16;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Tile {
+pub enum Tile {
     Empty,
     AngleUp,
     AngleDown,
@@ -166,54 +165,49 @@ fn get_energized(
     }
 }
 
-impl Day for Day16 {
-    fn task1(&self, file: &std::path::Path) {
-        let tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.chars().map(std::convert::Into::into).collect())
-            .collect();
-        let mut memo = HashSet::new();
-        println!(
-            "{}",
-            get_energized(&Ray::default(), &tiles, &mut memo).len()
-        );
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let tiles: Vec<Vec<Tile>> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.chars().map(std::convert::Into::into).collect())
-            .collect();
-        let total = (0..tiles.len())
-            .flat_map(|c| {
-                [
-                    Ray {
-                        posn: (0, c),
-                        dir: Direction::Down,
-                    },
-                    Ray {
-                        posn: (tiles.len() - 1, c),
-                        dir: Direction::Up,
-                    },
-                ]
-            })
-            .chain((0..tiles[0].len() - 1).flat_map(|r| {
-                [
-                    Ray {
-                        posn: (r, 0),
-                        dir: Direction::Right,
-                    },
-                    Ray {
-                        posn: (r, tiles[0].len() - 1),
-                        dir: Direction::Left,
-                    },
-                ]
-            }))
-            .par_bridge()
-            .map(|r| get_energized(&r, &tiles, &mut HashSet::new()).len())
-            .max()
-            .unwrap();
-        println!("{total}");
-    }
+#[aoc_generator(day16)]
+pub fn gen(input: &str) -> Vec<Vec<Tile>> {
+    input
+        .lines()
+        .map(|l| l.chars().map(std::convert::Into::into).collect())
+        .collect()
+}
+
+#[aoc(day16, part1)]
+pub fn part1(tiles: &[Vec<Tile>]) -> usize {
+    let mut memo = HashSet::new();
+    get_energized(&Ray::default(), tiles, &mut memo).len()
+}
+
+#[aoc(day16, part2)]
+pub fn part2(tiles: &[Vec<Tile>]) -> usize {
+    (0..tiles.len())
+        .flat_map(|c| {
+            [
+                Ray {
+                    posn: (0, c),
+                    dir: Direction::Down,
+                },
+                Ray {
+                    posn: (tiles.len() - 1, c),
+                    dir: Direction::Up,
+                },
+            ]
+        })
+        .chain((0..tiles[0].len() - 1).flat_map(|r| {
+            [
+                Ray {
+                    posn: (r, 0),
+                    dir: Direction::Right,
+                },
+                Ray {
+                    posn: (r, tiles[0].len() - 1),
+                    dir: Direction::Left,
+                },
+            ]
+        }))
+        .par_bridge()
+        .map(|r| get_energized(&r, tiles, &mut HashSet::new()).len())
+        .max()
+        .unwrap()
 }

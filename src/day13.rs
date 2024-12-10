@@ -1,7 +1,4 @@
-use std::fs;
-
-use super::Day;
-pub struct Day13;
+use aoc_runner_derive::aoc;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Reflection {
@@ -85,30 +82,27 @@ fn try_smudges(puzzle: &str) -> Reflection {
     out.unwrap()
 }
 
-impl Day for Day13 {
-    fn task1(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap();
-        let puzzles = backing.split("\n\n");
-        let soln = puzzles
-            .map(solve_puzzle)
-            .map(Option::unwrap)
-            .map(|r| match r {
-                Reflection::Horizontal(r, _) => r * 100,
-                Reflection::Vertical(c, _) => c,
-            })
-            .sum::<usize>();
-        println!("{soln}");
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let backing = fs::read_to_string(file).unwrap();
-        let puzzles = backing.split("\n\n");
-        let soln = puzzles
-            .map(try_smudges)
-            .map(|r| match r {
-                Reflection::Horizontal(r, _) => r * 100,
-                Reflection::Vertical(c, _) => c,
-            })
-            .sum::<usize>();
-        println!("{soln}");
-    }
+#[aoc(day13, part1)]
+pub fn part1(input: &str) -> usize {
+    input
+        .split("\n\n")
+        .map(solve_puzzle)
+        .map(Option::unwrap)
+        .map(|r| match r {
+            Reflection::Horizontal(r, _) => r * 100,
+            Reflection::Vertical(c, _) => c,
+        })
+        .sum()
+}
+
+#[aoc(day13, part2)]
+pub fn part2(input: &str) -> usize {
+    input
+        .split("\n\n")
+        .map(try_smudges)
+        .map(|r| match r {
+            Reflection::Horizontal(r, _) => r * 100,
+            Reflection::Vertical(c, _) => c,
+        })
+        .sum()
 }

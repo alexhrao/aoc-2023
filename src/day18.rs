@@ -1,13 +1,10 @@
-use std::{fs, str::FromStr};
+use aoc_runner_derive::{aoc, aoc_generator};
+use std::str::FromStr;
 
 use crate::day10::{Grid, Tile};
 
-use super::Day;
-
 use itertools::Itertools;
 use regex::Regex;
-
-pub struct Day18;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Direction {
@@ -41,21 +38,15 @@ impl FromStr for Direction {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-struct PlanRecord {
+pub struct PlanRecord {
     dir: Direction,
     len: usize,
     color: String,
 }
 
 impl PlanRecord {
-    pub fn explode(&self) -> impl Iterator<Item = Direction> + '_ {
+    fn explode(&self) -> impl Iterator<Item = Direction> + '_ {
         std::iter::repeat(self.dir).take(self.len)
-    }
-    pub fn convert(self) -> Self {
-        let len = usize::from_str_radix(&self.color[0..5], 16).unwrap();
-        let dir = self.color.chars().last().unwrap().into();
-        let color = self.color;
-        Self { dir, len, color }
     }
 }
 
@@ -145,46 +136,41 @@ fn vertices(plans: &[PlanRecord]) -> Vec<(isize, isize)> {
     out
 }
 
-impl Day for Day18 {
-    fn task1(&self, file: &std::path::Path) {
-        let records: Vec<PlanRecord> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse().unwrap())
-            .collect();
-        let (dig, trench) = dig(&records);
-        println!("{}", dig.num_contained() + trench);
-    }
-    fn task2(&self, file: &std::path::Path) {
-        let records: Vec<_> = fs::read_to_string(file)
-            .unwrap()
-            .lines()
-            .map(|l| l.parse::<PlanRecord>().unwrap().convert())
-            .collect();
-        let verts = vertices(&records);
+#[aoc_generator(day18)]
+pub fn gen(input: &str) -> Vec<PlanRecord> {
+    input.lines().map(|l| l.parse().unwrap()).collect()
+}
 
-        let area = verts
-            .windows(2)
-            .map(|vv| (vv[0], vv[1]))
-            // Connect back to where we started
-            .chain(std::iter::once((
-                *verts.last().unwrap(),
-                *verts.first().unwrap(),
-            )))
-            .map(|(v1, v2)| (v1.1 - v2.1) * v1.0)
-            .sum::<isize>();
-        let perim = verts
-            .windows(2)
-            .map(|vv| (vv[0], vv[1]))
-            // Connect back to where we started
-            .chain(std::iter::once((
-                *verts.last().unwrap(),
-                *verts.first().unwrap(),
-            )))
-            .map(|(v1, v2)| (v1.1.abs_diff(v2.1) + v1.0.abs_diff(v2.0)) as isize)
-            .sum::<isize>();
-        // We've only added half the perimeter! And we haven't included the top left square
-        let out = area + perim / 2 + 1;
-        println!("{out}");
-    }
+#[aoc(day18, part1)]
+pub fn part1(plans: &[PlanRecord]) -> usize {
+    let (dig, trench) = dig(plans);
+    dig.num_contained() + trench
+}
+
+#[aoc(day18, part2)]
+pub fn part2(plans: &[PlanRecord]) -> isize {
+    let verts = vertices(plans);
+
+    let area = verts
+        .windows(2)
+        .map(|vv| (vv[0], vv[1]))
+        // Connect back to where we started
+        .chain(std::iter::once((
+            *verts.last().unwrap(),
+            *verts.first().unwrap(),
+        )))
+        .map(|(v1, v2)| (v1.1 - v2.1) * v1.0)
+        .sum::<isize>();
+    let perim = verts
+        .windows(2)
+        .map(|vv| (vv[0], vv[1]))
+        // Connect back to where we started
+        .chain(std::iter::once((
+            *verts.last().unwrap(),
+            *verts.first().unwrap(),
+        )))
+        .map(|(v1, v2)| (v1.1.abs_diff(v2.1) + v1.0.abs_diff(v2.0)) as isize)
+        .sum::<isize>();
+    // We've only added half the perimeter! And we haven't included the top left square
+    area + perim / 2 + 1
 }
