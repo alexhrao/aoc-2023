@@ -39,3 +39,8 @@ pub fn part1(input: &str) -> usize {
     assert_eq!(len, 3);
     nodes.len() * (graph.node_count() - nodes.len())
 }
+
+#[aoc(day25, part2)]
+pub fn part2(_: &str) -> &'static str {
+    "Snow has returned!"
+}

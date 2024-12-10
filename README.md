@@ -39,7 +39,7 @@ The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repo
 | [22](src/day22.rs) |   ✅   |   ✅   | [Commentary](#day-22-commentary) |
 | [23](src/day23.rs) |   ✅   |   ✅   | [Commentary](#day-23-commentary) |
 | [24](src/day24.rs) |   ✅   |   ✅   | [Commentary](#day-24-commentary) |
-| [25](src/day25.rs) |   ✅   |   ❌   |                                  |
+| [25](src/day25.rs) |   ✅   |   ✅   |                                  |
 
 ### Day 10 Commentary
 
@@ -88,7 +88,7 @@ earlier, but basically you see when the inputs of the input to rx is satisfied
 individually; then multiply the cycles that each is satisfied to get the cycle
 overall the input will be satisfied. Really interesting!
 
-## Day 21 Commentary
+### Day 21 Commentary
 
 The first part was pretty straight forward, which honestly is what gave me
 pause... I just knew that it would be too easy to just do it 64 times! The
