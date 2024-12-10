@@ -15,15 +15,15 @@ The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repo
 
 | Day              | Part 1 | Part 2 | Commentary |
 |------------------|--------|--------|------------|
-| [01](src/day01.rs) | ✅ | ✅ |  |
-| [02](src/day02.rs) | ✅ | ✅ |  |
-| [03](src/day03.rs) | ✅ | ✅ |  |
-| [04](src/day04.rs) | ✅ | ✅ |  |
-| [05](src/day05.rs) | ✅ | ✅ |  |
-| [06](src/day06.rs) | ✅ | ✅ |  |
-| [07](src/day07.rs) | ✅ | ✅ |  |
-| [08](src/day08.rs) | ✅ | ✅ |  |
-| [09](src/day09.rs) | ✅ | ✅ |  |
+| [1](src/day1.rs) | ✅ | ✅ |  |
+| [2](src/day2.rs) | ✅ | ✅ |  |
+| [3](src/day3.rs) | ✅ | ✅ |  |
+| [4](src/day4.rs) | ✅ | ✅ |  |
+| [5](src/day5.rs) | ✅ | ✅ |  |
+| [6](src/day6.rs) | ✅ | ✅ |  |
+| [7](src/day7.rs) | ✅ | ✅ |  |
+| [8](src/day8.rs) | ✅ | ✅ |  |
+| [9](src/day9.rs) | ✅ | ✅ |  |
 | [10](src/day10.rs) | ✅ | ✅ | Some good memes came out of this one |
 | [11](src/day11.rs) | ✅ | ✅ |  |
 | [12](src/day12.rs) | ✅ | ✅ | This is insane, at least part 2 |
@@ -39,3 +39,4 @@ The Table of Contents has been (lovingly) ripped from @savbell's [great AoC repo
 | [22](src/day22.rs) | ✅ | ✅ | This was fun! Took me a few tries on the second part to finally understand that I need to be working my way up the bricks! One of the harder ones to wrap my mind around, but a really good puzzle! |
 | [23](src/day23.rs) | ✅ | ✅ | My solution is **not** optimal. The part 2 solution took a whole 12 minutes to run! But it's done so I'm moving on |
 | [24](src/day24.rs) | ✅ | ✅ | Part 1 was really fun, as I've said before I love simulations where you can actually just run through it. The second part... honestly I'm kind of struggling to figure out what it's really asking. I mean it makes sense, but golly I don't think I even really know how to find it for, like, 2 or 3 hailstones, much less hundreds. I finally was able to get it thanks to the code from [@ash42](https://github.com/ash42/adventofcode/blob/main/adventofcode2023/src/nl/michielgraat/adventofcode2023/day24/Day24.java), which does a wonderful job of walking you through the necessary system of equations. |
+| [25](src/day25.rs) | ✅ | ❌ |  |
